@@ -18,7 +18,7 @@ int main (){
     csv = AbrirArquivo(csv, "dados2.csv", "r");
     bin = AbrirArquivo(bin, "dados2.bin", "wb");
 
-    Funcionalidade1(csv, bin);
+    Testando(csv, bin);
 
     fclose(csv);
     fclose(bin);
