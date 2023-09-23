@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 #define TAM_REGISTRO 76
-#define CHAR_LIXO '$'
+#define CHAR_LIXO "$"
 
 // define struct para campos de tamanho variavel
 typedef struct{

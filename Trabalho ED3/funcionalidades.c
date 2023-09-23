@@ -21,44 +21,37 @@ FILE *AbrirArquivo(FILE *arquivo, char *nomeArquivo, char *modo){
     return arquivo;
 }
 
-void CriaRegistro(registro *Reg, char *campo, int tamCampo, int numVirgulas, FILE *bin){
+int VerificaNulo(char *campo){
+    if(campo[0] == '\0')
+        return -1;
+
+    return ((int) strtol(campo, NULL, 10));
+}
+
+void CriaRegistro(registro *Reg, char *campo, int tamCampo, int numVirgulas){ 
     switch(numVirgulas){
-        case 0: // estamos com o primeiro campo: tecnologiaOrigem
+        case 0: 
             Reg->TecnologiaOrigem.tamanho = tamCampo;
-            Reg->TecnologiaOrigem.nome = campo;
-            printf("REGISTRO:\n");
-            printf("%d\n", Reg->TecnologiaOrigem.tamanho);
-            printf("%s\n", Reg->TecnologiaOrigem.nome);
-            //fwrite(&(Reg->TecnologiaOrigem.tamanho), 4, 1, bin);
-            //fwrite(Reg->TecnologiaOrigem.nome, tamCampo, 1, bin);
+            Reg->TecnologiaOrigem.nome = (char *) malloc((tamCampo + 1) * sizeof(char));
+            strcpy(Reg->TecnologiaOrigem.nome, campo);
             break;
 
-        case 1: // estamos com o segundo campo: grupo
-            Reg->grupo = atoi(campo);
-            printf("%d\n", Reg->grupo);
-            //fwrite(&(Reg->grupo), 4, 1, bin);
+        case 1: 
+            Reg->grupo = VerificaNulo(campo);
             break;
 
-        case 2: // popularidade
-            Reg->popularidade = atoi(campo);
-            printf("%d\n", Reg->popularidade);
-            //fwrite(&(Reg->popularidade), 4, 1, bin);
+        case 2: 
+            Reg->popularidade = VerificaNulo(campo);
             break;
 
-        case 3: // tecnologiaDestino
+        case 3: 
             Reg->TecnologiaDestino.tamanho = tamCampo;
-            Reg->TecnologiaDestino.nome = campo;
-            printf("%d\n", Reg->TecnologiaDestino.tamanho);
-            printf("%s\n", Reg->TecnologiaDestino.nome);
-            //fwrite(&(Reg->TecnologiaDestino.tamanho), 4, 1, bin);
-            //fwrite(Reg->TecnologiaDestino.nome, tamCampo, 1, bin);
+            Reg->TecnologiaDestino.nome = (char *) malloc((tamCampo + 1) * sizeof(char));
+            strcpy(Reg->TecnologiaDestino.nome, campo);
             break;
         
-        case 4: // peso
-            Reg->peso = atoi(campo);
-            printf("%d\n", Reg->peso);
-            printf("--------------\n\n");
-            //fwrite(&(Reg->peso), 4, 1, bin);
+        case 4:
+            Reg->peso = VerificaNulo(campo);
             break;
 
         default:
@@ -66,37 +59,75 @@ void CriaRegistro(registro *Reg, char *campo, int tamCampo, int numVirgulas, FIL
     }
 }
 
-void Testando(FILE *csv, FILE *bin){
+void EscreveBin(registro Reg, FILE *bin){ // funcao para escrita no binário campo por campo do registro //tirar o \0
+    // calcula o tamanho o lixo restante
+    int tamLixo = TAM_REGISTRO - (1 + Reg.TecnologiaOrigem.tamanho + Reg.TecnologiaDestino.tamanho) * (sizeof(char)) - 5 * (sizeof(int));
+
+    Reg.removido = '0'; // seta o registro como não removido
+    
+    fwrite(&Reg.removido, sizeof(char), 1, bin);
+    fwrite(&Reg.grupo, sizeof(int), 1, bin);
+    fwrite(&Reg.popularidade, sizeof(int), 1, bin);
+    fwrite(&Reg.peso, sizeof(int), 1, bin);
+    fwrite(&Reg.TecnologiaOrigem.tamanho, sizeof(int), 1, bin);
+    fwrite(Reg.TecnologiaOrigem.nome, sizeof(char), Reg.TecnologiaOrigem.tamanho, bin);
+    fwrite(&Reg.TecnologiaDestino.tamanho, sizeof(int), 1, bin);
+    fwrite(Reg.TecnologiaDestino.nome, sizeof(char), Reg.TecnologiaDestino.tamanho, bin);
+    
+    for(int i = 0; i < tamLixo; i++){
+        fwrite(CHAR_LIXO, sizeof(char), 1, bin);
+    }
+
+    free(Reg.TecnologiaOrigem.nome);
+    free(Reg.TecnologiaDestino.nome);
+}
+
+void Testando(FILE *csv, FILE *bin){ // LEMBRAR DE CONSIDERAR A PRIMERA LINHA DO CSV
     char caractereLido;
     int tamCampo = 0;
     int numVirgulas = 0;
     char *campo = NULL; // instancia o campo
-    registro *Reg = (registro *) calloc(1, TAM_REGISTRO); // instancia o registro
+    registro Reg; // instancia o registro
 
     do{ 
         caractereLido = fgetc(csv);
 
-        if(caractereLido == ',' || caractereLido == '\r' || caractereLido == EOF){ // leu uma string inteira
-            CriaRegistro(Reg, campo, tamCampo, numVirgulas, bin); // criamos o registro contendo as informações do campo
-            
+        // terminou de ler um campo inteiro 
+        if(caractereLido == ',' || caractereLido == '\r' || caractereLido == EOF){
+            // garantimos que o campo vai ser tratado como string colocando '\0' ao final
+            // o tamanho do campo não é aumentado, já que não queremos considerar o '\0'
+            campo = (char *) realloc(campo, (tamCampo + 1));
+            campo[tamCampo] = '\0';
+
+            // criamos o registro contendo as informações do campo
+            CriaRegistro(&Reg, campo, tamCampo, numVirgulas); 
+
             free(campo); // libera o campo
-            campo = (char *) calloc(1, sizeof(char)); // aloca um novo campo
+            campo = (char *) malloc(1 * sizeof(char)); // aloca um novo campo
 
             tamCampo = 0; // reseta o tamanho do campo
             numVirgulas++; // adiciona uma virgula
         }
-        else if(caractereLido == '\n'){ // pulando de linha -> acabou o registro
-            fwrite(Reg, sizeof(registro), 1, bin); // escrevemos o registro no arquivo bin
 
-            free(Reg); // libera o registro
-            Reg = (registro *) calloc(1, TAM_REGISTRO); // gera um novo registro
+        // terminou de ler uma linha inteira
+        else if(caractereLido == '\n'){
+            EscreveBin(Reg, bin);
 
             numVirgulas = 0; // reseta numVirgulas para novo registro
         }
+
+        // caractere lido é válido e é colocado no campo
         else{
             campo = (char *) realloc(campo, (tamCampo + 1));
             campo[tamCampo] = caractereLido;
             tamCampo++;
         }
+
     } while(caractereLido != EOF);
+
+    EscreveBin(Reg, bin); // escreve o ultimo registro
+
+    free(campo);
 }
+
+
