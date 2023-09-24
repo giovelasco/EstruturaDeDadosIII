@@ -1,33 +1,68 @@
 #include <stdio.h>
+#include "funcionalidades.h"
+
+/**
+ * Lê uma palavra digitada no terminal.
+ * @return retorna a palavra lida
+*/
+char *readline(){
+    char *palavra = NULL;
+    char caractereLido = '\0';
+    int tam = 0;
+    
+    // desconsideramos os espaços e quebras de linha para inicio da string
+	do{ 
+        caractereLido = getchar();
+
+    } while(caractereLido == '\n' || caractereLido == '\r' || caractereLido == ' ');
+
+
+    // recebe os caracteres até identificar algum critério de parada
+    do{ 
+        tam += 1;
+        palavra = (char *) realloc(palavra, tam * sizeof(char));
+        palavra[tam - 1] = caractereLido;
+        caractereLido = getchar();
+
+    } while(caractereLido !=  '\r' && caractereLido != '\n' && caractereLido != ' ' && caractereLido != EOF);
+
+    // acrescenta o caractere de string '\0'
+    tam += 1;
+    palavra = (char *) realloc(palavra, tam * sizeof(char));
+    palavra[tam - 1] = '\0';
+
+    return palavra;
+}
 
 int main(){
     int escolha;
     scanf("%d", &escolha);
-    char* nomeCsv;
-    char* nomeBin;
-    FILE* csv;
-    FILE* bin;
+    char* nomeCSV;
+    char* nomeBIN;
 
     switch(escolha){
+        // funcionalidade 1
         case 1:
-            csv = fopen(nomeCsv, "r");
-            bin = fopen(nomeBin, "wb");
-            if((csv || bin) == NULL){
-                printf("Falha no processamento do arquivo.");
-                return -1;
-            }
+            nomeCSV = readline();
+            nomeBIN = readline();
+            Funcionalidade1(nomeCSV, nomeBIN);
+            free(nomeCSV);
+            free(nomeBIN);
             break;
 
+        // funcionalidade 2
         case 2:
-            // funcionalidade 2
+            
             break;
 
+        // funcionalidade 3
         case 3:
-            // funcionalidade 3
+
             break;
 
+        // funcionalidade 4
         case 4:
-            // funcionalidade 4
+
             break;
 
         default:
