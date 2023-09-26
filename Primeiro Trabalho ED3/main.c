@@ -37,8 +37,8 @@ char *readline(){
 int main(){
     int escolha;
     scanf("%d", &escolha);
-    char* nomeCSV;
-    char* nomeBIN;
+    char *nomeCSV;
+    char *nomeBIN;
 
     switch(escolha){
         // funcionalidade 1
@@ -52,7 +52,9 @@ int main(){
 
         // funcionalidade 2
         case 2:
-            
+            nomeBIN = readline();
+            Funcionalidade2(nomeBIN);
+            free(nomeBIN);
             break;
 
         // funcionalidade 3

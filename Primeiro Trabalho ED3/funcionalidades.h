@@ -10,3 +10,6 @@
 */
 void Funcionalidade1(char *nomeCSV, char *nomeBIN);
 
+void Funcionalidade2(char *nomeBIN);
+
+void LeRegistroCabecalho(FILE *bin, cabecalho *RegCab);

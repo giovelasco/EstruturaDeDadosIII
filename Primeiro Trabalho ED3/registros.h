@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #define TAM_REGISTRO 76
+#define TAM_REGISTRO_FIXO 21
 #define CHAR_LIXO "$"
 
 // define struct para o registo de cabecalho com 13 bytes 

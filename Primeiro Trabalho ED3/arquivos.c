@@ -29,7 +29,7 @@ void EscreveRegistroCabecalho(FILE *bin, cabecalho regCab){
 
 void EscreveRegistroDados(FILE *bin, registro regDados){ 
     // calcula o tamanho o lixo
-    int tamLixo = TAM_REGISTRO - (1 + regDados.TecnologiaOrigem.tamanho + regDados.TecnologiaDestino.tamanho) * (sizeof(char)) - 5 * (sizeof(int));
+    int tamLixo = TAM_REGISTRO - (regDados.TecnologiaOrigem.tamanho + regDados.TecnologiaDestino.tamanho) * (sizeof(char)) - TAM_REGISTRO_FIXO;
 
     // marca o registro como não removido
     regDados.removido = '0';

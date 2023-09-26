@@ -110,3 +110,87 @@ void Funcionalidade1(char *nomeCSV, char *nomeBIN){
     binarioNaTela(nomeBIN);
 }
 
+void LeRegistroCabecalho(FILE *bin, cabecalho *RegCab){
+    fread(&(RegCab->status), sizeof(char), 1, bin);
+    fread(&(RegCab->proxRRN), sizeof(int), 1, bin);
+    fread(&(RegCab->nroTecnologias), sizeof(int), 1, bin);
+    fread(&(RegCab->nroParesTecnologias), sizeof(int), 1, bin);
+}
+
+void LeRegistroDados(FILE *bin, registro *RegDados){
+    fread(&(RegDados->grupo), sizeof(int), 1, bin);
+    fread(&(RegDados->popularidade), sizeof(int), 1, bin);
+    fread(&(RegDados->peso), sizeof(int), 1, bin);
+
+    fread(&(RegDados->TecnologiaOrigem.tamanho), sizeof(int), 1, bin);
+    RegDados->TecnologiaOrigem.nome = (char *) malloc((RegDados->TecnologiaOrigem.tamanho + 1) * sizeof(char));
+    fread(RegDados->TecnologiaOrigem.nome, sizeof(char), RegDados->TecnologiaOrigem.tamanho, bin);
+    RegDados->TecnologiaOrigem.nome[RegDados->TecnologiaOrigem.tamanho] = '\0';
+
+    fread(&(RegDados->TecnologiaDestino.tamanho), sizeof(int), 1, bin);
+    RegDados->TecnologiaDestino.nome = (char *) malloc((RegDados->TecnologiaDestino.tamanho + 1) * sizeof(char));
+    fread(RegDados->TecnologiaDestino.nome, sizeof(char), RegDados->TecnologiaDestino.tamanho, bin);
+    RegDados->TecnologiaDestino.nome[RegDados->TecnologiaDestino.tamanho] = '\0';
+}
+
+void ImprimeRegistro(registro RegDados){
+    (strcmp(RegDados.TecnologiaOrigem.nome, "\0") != 0) ? printf("%s, ", RegDados.TecnologiaOrigem.nome) : printf("NULO, ");
+    (RegDados.grupo != -1) ? printf("%d, ", RegDados.grupo) : printf("NULO, ");
+    (RegDados.popularidade != -1) ? printf("%d, ", RegDados.popularidade) : printf("NULO, ");
+    (strcmp(RegDados.TecnologiaDestino.nome, "\0") != 0) ? printf("%s, ", RegDados.TecnologiaDestino.nome) : printf("NULO, ");
+    (RegDados.peso != -1) ? printf("%d\r\n", RegDados.peso) : printf("NULO\r\n");
+}
+
+void Funcionalidade2(char *nomeBIN){
+    // abre os arquivos
+    FILE *bin;
+    bin = AbrirArquivo(bin, nomeBIN, "r");
+    
+    // inicio da leitura dos registros de cabecalho
+    cabecalho RegCab;
+    LeRegistroCabecalho(bin, &RegCab);
+
+    // test2e impressão do cabeçalho
+    printf("Cabecalho:\n");
+    printf("status: %c\n", RegCab.status);
+    printf("proxRRN: %d\n", RegCab.proxRRN);
+    printf("nroTecnologias: %d\n", RegCab.nroTecnologias);
+    printf("nroParesTecnologias: %d\n\n", RegCab.nroParesTecnologias);
+
+    // verifica se o arquivo está consistente
+    if(RegCab.status == '0'){
+        printf("Falha no processamento do arquivo.");
+        fclose(bin);
+        return;
+    }
+
+    // inicio da leitura dos registros de dados
+    registro RegDados;
+    int numDadosLidos = 0;
+
+    while(fread(&(RegDados.removido), sizeof(char), 1, bin) != 0){
+        if(RegDados.removido == '1'){ // o registro de dados foi removido
+            fseek(bin, TAM_REGISTRO - 1, SEEK_CUR);
+        }
+
+        else{ // o registro de dados existe
+            LeRegistroDados(bin, &RegDados);
+
+            ImprimeRegistro(RegDados);
+
+            free(RegDados.TecnologiaOrigem.nome);
+            free(RegDados.TecnologiaDestino.nome);
+
+            numDadosLidos++;
+
+            int tamLixo = TAM_REGISTRO - (RegDados.TecnologiaOrigem.tamanho + RegDados.TecnologiaDestino.tamanho) * (sizeof(char)) - TAM_REGISTRO_FIXO;
+
+            fseek(bin, tamLixo, SEEK_CUR);
+        }
+    }
+
+    if(numDadosLidos == 0) // verifica se foi lido algum registro
+        printf("Registro inexistente.");
+    
+    fclose(bin);
+}
