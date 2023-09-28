@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define TAM_CABECALHO 13
 #define TAM_REGISTRO 76
 #define TAM_REGISTRO_FIXO 21
 #define CHAR_LIXO "$"
@@ -70,6 +71,29 @@ char *CopiaCampo(char *campo, int tamCampo);
  * @param delimitador separador dos campos do registro
 */
 void AlteraRegistro(registro *regDados, char *campo, int tamCampo, int delimitador);
+
+
+/**
+ * Lê o registro de cabeçalho de um arquivo binário.
+ * @param bin ponteiro para o arquivo binário
+ * @param regCab ponteiro para struct do tipo registro de cabeçalho
+*/
+void LeRegistroCabecalho(FILE *bin, cabecalho *regCab);
+
+
+/**
+ * Lê o registro de dados de um arquivo binário.
+ * @param bin ponteiro para o arquivo binário
+ * @param regDados ponteiro para struct do tipo registro de dados
+*/
+void LeRegistroDados(FILE *bin, registro *regDados);
+
+
+/**
+ * Realiza a impressão dos campos de um registro de dados.
+ * @param regDados struct do tipo registro de dados
+*/
+void ImprimeRegistro(registro regDados);
 
 
 

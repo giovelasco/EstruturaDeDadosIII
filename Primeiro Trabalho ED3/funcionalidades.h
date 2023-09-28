@@ -10,6 +10,17 @@
 */
 void Funcionalidade1(char *nomeCSV, char *nomeBIN);
 
+/**
+ * Permite a recuperação dos dados de todos os registros armazenados em um arquivo
+de dados de entrada.
+ * @param nomeBIN nome do arquivo .bin 
+*/
 void Funcionalidade2(char *nomeBIN);
 
-void LeRegistroCabecalho(FILE *bin, cabecalho *RegCab);
+/**
+ * Permite a recuperação dos dados de um registro, a partir da identificação do RRN
+(número relativo do registro) do registro desejado.
+ * @param nomeBIN nome do arquivo .bin 
+ * @param RRN número relativo de registro
+*/
+void Funcionalidade4(char *nomeBIN, int RRN);

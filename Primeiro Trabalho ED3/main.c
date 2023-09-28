@@ -64,7 +64,11 @@ int main(){
 
         // funcionalidade 4
         case 4:
-
+            nomeBIN = readline();
+            int RRN;
+            scanf("%d", &RRN);
+            Funcionalidade4(nomeBIN, RRN);
+            free(nomeBIN);
             break;
 
         default:

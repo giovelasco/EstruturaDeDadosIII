@@ -3,26 +3,6 @@
 #include <string.h>
 #include "registros.h"
 
-int ComparaCampos(char **campo1, char *campo2, int tamCampo2, cabecalho *regCab){ 
-    if(*campo1 == NULL){
-        *campo1 = (char *) malloc(sizeof(char));
-        *campo1[0] = '\0';
-    }
-
-    // verifica se o campo anterior é diferente do campo atual e se o campo é vazio
-    if(strcmp(*campo1, campo2) != 0  && campo2[0] != '\0'){
-        free(*campo1);
-        *campo1 = (char *) malloc((tamCampo2 + 1) * sizeof(char)); // aloca um novo campo
-        strcpy(*campo1, campo2); // novo campo igual ao campo anterior
-
-        regCab->nroTecnologias++; // incrementa número de tecnologias
-
-        return 1;
-    }
-
-    return 0;
-}
-
 int LeInteiro(char *campo){
     if(campo[0] == '\0')
         return -1;
@@ -62,4 +42,35 @@ void AlteraRegistro(registro *regDados, char *campo, int tamCampo, int delimitad
             regDados->peso = LeInteiro(campo);
             break;
     }
+}
+
+void LeRegistroCabecalho(FILE *bin, cabecalho *regCab){
+    fread(&(regCab->status), sizeof(char), 1, bin);
+    fread(&(regCab->proxRRN), sizeof(int), 1, bin);
+    fread(&(regCab->nroTecnologias), sizeof(int), 1, bin);
+    fread(&(regCab->nroParesTecnologias), sizeof(int), 1, bin);
+}
+
+void LeRegistroDados(FILE *bin, registro *regDados){
+    fread(&(regDados->grupo), sizeof(int), 1, bin);
+    fread(&(regDados->popularidade), sizeof(int), 1, bin);
+    fread(&(regDados->peso), sizeof(int), 1, bin);
+
+    fread(&(regDados->TecnologiaOrigem.tamanho), sizeof(int), 1, bin);
+    regDados->TecnologiaOrigem.nome = (char *) malloc((regDados->TecnologiaOrigem.tamanho + 1) * sizeof(char));
+    fread(regDados->TecnologiaOrigem.nome, sizeof(char), regDados->TecnologiaOrigem.tamanho, bin);
+    regDados->TecnologiaOrigem.nome[regDados->TecnologiaOrigem.tamanho] = '\0';
+
+    fread(&(regDados->TecnologiaDestino.tamanho), sizeof(int), 1, bin);
+    regDados->TecnologiaDestino.nome = (char *) malloc((regDados->TecnologiaDestino.tamanho + 1) * sizeof(char));
+    fread(regDados->TecnologiaDestino.nome, sizeof(char), regDados->TecnologiaDestino.tamanho, bin);
+    regDados->TecnologiaDestino.nome[regDados->TecnologiaDestino.tamanho] = '\0';
+}
+
+void ImprimeRegistro(registro regDados){
+    (strcmp(regDados.TecnologiaOrigem.nome, "\0") != 0) ? printf("%s, ", regDados.TecnologiaOrigem.nome) : printf("NULO, ");
+    (regDados.grupo != -1) ? printf("%d, ", regDados.grupo) : printf("NULO, ");
+    (regDados.popularidade != -1) ? printf("%d, ", regDados.popularidade) : printf("NULO, ");
+    (strcmp(regDados.TecnologiaDestino.nome, "\0") != 0) ? printf("%s, ", regDados.TecnologiaDestino.nome) : printf("NULO, ");
+    (regDados.peso != -1) ? printf("%d\r\n", regDados.peso) : printf("NULO\r\n");
 }
