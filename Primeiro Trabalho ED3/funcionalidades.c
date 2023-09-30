@@ -1,36 +1,13 @@
+/*
+Nome: Gabriel Balbão Bazon - NUSP: 13676408
+Nome: Giovanna de Freitas Velasco - NUSP: 13676346
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "funcionalidades.h"
 #include "lista_encadeada.h"
-
-void binarioNaTela(char *nomeArquivoBinario) { /* Você não precisa entender o código dessa função. */
-
-	/* Use essa função para comparação no run.codes. Lembre-se de ter fechado (fclose) o arquivo anteriormente.
-	*  Ela vai abrir de novo para leitura e depois fechar (você não vai perder pontos por isso se usar ela). */
-
-	unsigned long i, cs;
-	unsigned char *mb;
-	size_t fl;
-	FILE *fs;
-	if(nomeArquivoBinario == NULL || !(fs = fopen(nomeArquivoBinario, "rb"))) {
-		fprintf(stderr, "ERRO AO ESCREVER O BINARIO NA TELA (função binarioNaTela): não foi possível abrir o arquivo que me passou para leitura. Ele existe e você tá passando o nome certo? Você lembrou de fechar ele com fclose depois de usar?\n");
-		return;
-	}
-	fseek(fs, 0, SEEK_END);
-	fl = ftell(fs);
-	fseek(fs, 0, SEEK_SET);
-	mb = (unsigned char *) malloc(fl);
-	fread(mb, 1, fl, fs);
-
-	cs = 0;
-	for(i = 0; i < fl; i++) {
-		cs += (unsigned long) mb[i];
-	}
-	printf("%lf\n", (cs / (double) 100));
-	free(mb);
-	fclose(fs);
-}
 
 void Funcionalidade1(char *nomeCSV, char *nomeBIN){ 
     // abre os arquivos
@@ -164,18 +141,92 @@ void Funcionalidade2(char *nomeBIN){
     fclose(bin);
 }
 
-int CalculaByteOffset(int RRN){
-    return (TAM_CABECALHO + (RRN * TAM_REGISTRO));
+void Funcionalidade3(char *nomeBIN, int n){
+    // abre arquivo binário 
+    FILE *bin = AbrirArquivo(bin, nomeBIN, "rb");
+    if(bin == NULL) return;
+    
+    // verifica o status do arquivo
+    char status;
+    fread(&status, sizeof(char), 1, bin);
+    if(status == '0'){
+        printf("Falha no processamento do arquivo.");
+        fclose(bin);
+        return;
+    }
+
+    registro regDados;
+
+    // inicia a leitura dos campos a serem analisados
+    for(int i = 0; i < n; i++){
+        fseek(bin, 13, SEEK_SET); // pula o cabeçalho do arquivo
+
+        char *nomeCampo;
+        nomeCampo = readline(); // lê o nome do campo desejado
+        int numRegistrosLidos = 0;
+
+        // analisa para cada campo possível
+        if(strcmp(nomeCampo, "grupo") == 0){
+            int grupo;
+            scanf("%d", &grupo); 
+
+            // verifica cada registro até o fim do arquivo
+            while(fread(&(regDados.removido), sizeof(char), 1, bin) != 0)
+                numRegistrosLidos += ComparaCampoInteiro(bin, &regDados, 4, grupo);                  
+        }
+
+        else if(strcmp(nomeCampo, "popularidade") == 0){
+            int popularidade;
+            scanf("%d", &popularidade);
+
+            while(fread(&(regDados.removido), sizeof(char), 1, bin) != 0)
+                numRegistrosLidos += ComparaCampoInteiro(bin, &regDados, 8, popularidade);                  
+        }
+        
+        else if(strcmp(nomeCampo, "peso") == 0){
+            int peso;
+            scanf("%d", &peso);
+
+            while(fread(&(regDados.removido), sizeof(char), 1, bin) != 0)
+                numRegistrosLidos += ComparaCampoInteiro(bin, &regDados, 12, peso);                  
+        }
+        
+        else if(strcmp(nomeCampo, "nomeTecnologiaOrigem") == 0){ 
+            char *tecOrigem;
+            tecOrigem = readlineAspas();
+
+            while(fread(&(regDados.removido), sizeof(char), 1, bin) != 0)
+                numRegistrosLidos += ComparaCampoString(bin, &regDados, 1, tecOrigem); 
+
+            free(tecOrigem);    
+        }
+
+        else if(strcmp(nomeCampo, "nomeTecnologiaDestino") == 0){
+            char *tecDestino;
+            tecDestino = readlineAspas();
+
+            while(fread(&(regDados.removido), sizeof(char), 1, bin) != 0)
+                numRegistrosLidos += ComparaCampoString(bin, &regDados, 2, tecDestino);
+
+            free(tecDestino);
+        }
+        
+        // libera a memória alocada pela função readline()
+        free(nomeCampo);
+
+        // caso nenhum registro tenha sido lido
+        if(numRegistrosLidos == 0)
+            printf("Registro inexistente.");
+    }
+
+    fclose(bin);
 }
 
 void Funcionalidade4(char *nomeBIN, int RRN){
     // abre o arquivo binario
     FILE *bin;
     bin = AbrirArquivo(bin, nomeBIN, "rb");
-    if(bin == NULL){
-        printf("Falha no processamento do arquivo.");
-        return;
-    }
+    if(bin == NULL) return;
 
     // verifica o status do arquivo
     char status;
@@ -216,3 +267,4 @@ void Funcionalidade4(char *nomeBIN, int RRN){
 
     fclose(bin);
 }
+

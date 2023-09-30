@@ -1,11 +1,5 @@
-CFILE  = funcionalidades.c arquivos.c registros.c lista_encadeada.c main.c
-HFILE = funcionalidades.h arquivos.h registros.h lista_encadeada.h
-
 all :
-	gcc -g -o programaTrab $(CFILE) $(HFILE)
+	gcc -o programaTrab *.c
 
-run : programaTrab
+run : 
 	./programaTrab
-
-clean :
-	rm *.o programaTrab

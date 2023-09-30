@@ -1,38 +1,10 @@
+/*
+Nome: Gabriel Balbão Bazon - NUSP: 13676408
+Nome: Giovanna de Freitas Velasco - NUSP: 13676346
+*/
+
 #include <stdio.h>
 #include "funcionalidades.h"
-
-/**
- * Lê uma palavra digitada no terminal.
- * @return retorna a palavra lida
-*/
-char *readline(){
-    char *palavra = NULL;
-    char caractereLido = '\0';
-    int tam = 0;
-    
-    // desconsideramos os espaços e quebras de linha para inicio da string
-	do{ 
-        caractereLido = getchar();
-
-    } while(caractereLido == '\n' || caractereLido == '\r' || caractereLido == ' ');
-
-
-    // recebe os caracteres até identificar algum critério de parada
-    do{ 
-        tam += 1;
-        palavra = (char *) realloc(palavra, tam * sizeof(char));
-        palavra[tam - 1] = caractereLido;
-        caractereLido = getchar();
-
-    } while(caractereLido !=  '\r' && caractereLido != '\n' && caractereLido != ' ' && caractereLido != EOF);
-
-    // acrescenta o caractere de string '\0'
-    tam += 1;
-    palavra = (char *) realloc(palavra, tam * sizeof(char));
-    palavra[tam - 1] = '\0';
-
-    return palavra;
-}
 
 int main(){
     int escolha;
@@ -59,9 +31,13 @@ int main(){
 
         // funcionalidade 3
         case 3:
-
+            nomeBIN = readline(); 
+            int n;
+            scanf("%d", &n);
+            Funcionalidade3(nomeBIN, n); 
+            free(nomeBIN);
             break;
-
+        
         // funcionalidade 4
         case 4:
             nomeBIN = readline();
