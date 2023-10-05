@@ -18,6 +18,18 @@ FILE *AbrirArquivo(FILE *arquivo, char *nomeArquivo, char *modoAbertura){
     return arquivo;
 }
 
+int VerificaStatus(FILE *bin){
+    char status;
+    fread(&status, sizeof(char), 1, bin);
+    if(status == '0'){
+        printf("Falha no processamento do arquivo.");
+        fclose(bin);
+        return 0;
+    }
+
+    return 1;
+}
+
 void LePrimeiraLinha(FILE *csv){
     char caractereLido;
     do{

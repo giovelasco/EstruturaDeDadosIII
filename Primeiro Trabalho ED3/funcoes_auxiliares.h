@@ -16,6 +16,12 @@ Nome: Giovanna de Freitas Velasco - NUSP: 13676346
 */
 FILE *AbrirArquivo(FILE *arquivo, char *nomeArquivo, char *modoAbertura);
 
+/**
+ * Verifica o status de um arquivo binário. 
+ * @param bin ponteiro para um arquivo .bin
+ * @returns 1 se o arquivo está consistente e 0 caso contrário
+*/
+int VerificaStatus(FILE *bin);
 
 /**
  * Realiza a leitura da primeira linha de um arquivo .csv.

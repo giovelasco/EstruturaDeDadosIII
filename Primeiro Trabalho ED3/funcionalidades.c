@@ -50,9 +50,17 @@ void Funcionalidade1(char *nomeCSV, char *nomeBIN){
             // altera o registro com a informação do campo
             AlteraRegistro(&regDados, campo, tamCampo, numVirgulas);
 
-            // verifica se o campo tecnologias destino é igual a esse campo no registro anterior
-            if((numVirgulas == 0 || numVirgulas == 3) && tamCampo != 0)
-                InsereLista(l, campo); // contabiliza número de tecnologias
+            // realiza determinados procedimentos para casos em nomeTecnologiaOrigem ou nomeTecnologiaDestino
+            if(numVirgulas == 0 || numVirgulas == 3){
+                // contagem do nroTecnologias
+                if(tamCampo != 0) // garante que o campo não é nulo
+                    InsereLista(l, campo); // contabiliza número de tecnologias
+
+                // contagem de nroParesTecnologias
+                else // algum dos campos é nulo, então não é contabilizado como par
+                    regCab.nroParesTecnologias--; // anula a inserção do par ao final do procedimento
+            }
+                
 
             free(campo);
             campo = (char *) malloc(1 * sizeof(char)); // aloca um novo campo
@@ -147,13 +155,8 @@ void Funcionalidade3(char *nomeBIN, int n){
     if(bin == NULL) return;
     
     // verifica o status do arquivo
-    char status;
-    fread(&status, sizeof(char), 1, bin);
-    if(status == '0'){
-        printf("Falha no processamento do arquivo.");
-        fclose(bin);
+    if(VerificaStatus(bin) == 0)
         return;
-    }
 
     registro regDados;
 
@@ -229,13 +232,8 @@ void Funcionalidade4(char *nomeBIN, int RRN){
     if(bin == NULL) return;
 
     // verifica o status do arquivo
-    char status;
-    fread(&status, sizeof(char), 1, bin);
-    if(status == '0'){
-        printf("Falha no processamento do arquivo.");
-        fclose(bin);
+    if(VerificaStatus(bin) == 0)
         return;
-    }
 
     // calcula posição do byteoffset
     int byteoffset = CalculaByteOffset(RRN);
