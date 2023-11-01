@@ -288,6 +288,24 @@ void Funcionalidade5(char *nomeDadosBIN, char *nomeIndiceBIN){
         fclose(indiceBIN);
         return;
     }
+
+    
+    // a busca começa pelo nó raiz
+    // no raiz é nulo inicialmente -> cria um novo nó
+    // nó 0 criado
+    // inserir primeiro elemento na arvore
+    // tem espaço no nó
+    // insere os dados referentes ao primeiro elemento na primeira posição do nó de rrn 0
+
+    // codar uma busca binária
+    // split 2-1
+    // codar a criação de um novo nó
+    // distribuição uniforme das chaves
+    // atualizar o rrn 
+    // o numero de nós é igual ao numero de pares de tecnologia - é garantido que não tem repeticao
+    // registros logicamente removidos são contabilizados no nroParesTecnologias?
+    
+
     
 }
 
