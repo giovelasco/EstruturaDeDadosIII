@@ -8,6 +8,6 @@ Nome: Giovanna de Freitas Velasco - NUSP: 13676346
 #include "registros.h"
 #include "registros_indice.h"
 
-int BuscaArvoreB(FILE *indiceBIN, char *chaveBuscada);
+int BuscaArvoreB(FILE *indiceBIN, char *chaveDeBusca);
 
 void InsereArvoreB(FILE *indiceBIN, cabecalhoIndice *cabInd, char *chaveDeBusca, int RRNdados);
