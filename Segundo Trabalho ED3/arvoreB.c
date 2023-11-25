@@ -43,7 +43,7 @@ int BuscaRecursivaArvoreB(FILE *indiceBIN, paginaIndice *pagInd, char *chaveDeBu
         else{
             // posiciona o ponteiro do arquivo de índice no nó da subárvore
             fseek(indiceBIN, (pagInd->P[*indexNoFilho] + 1) * TAM_REGISTRO_INDICES, SEEK_SET);
-            BuscaRecursivaArvoreB(indiceBIN, pagInd, chaveDeBusca, tamChave);
+            BuscaRecursivaArvoreB(indiceBIN, pagInd, chaveDeBusca, tamChave, indexNoFilho);
         }
     } 
     else // encontrou a chave no nó, retorna o RRN para o arquivo de dados
