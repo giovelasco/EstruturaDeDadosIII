@@ -1,12 +1,13 @@
-//Nome: Gabriel Balbão Bazon - NUSP: 13676408
-//Nome: Giovanna de Freitas Velasco - NUSP: 13676346
+/*
+Nome: Gabriel Balbão Bazon - NUSP: 13676408
+Nome: Giovanna de Freitas Velasco - NUSP: 13676346
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "funcionalidades_indice.h"
 
-/*
 void Funcionalidade5(char *nomeDadosBIN, char *nomeIndiceBIN){
     // abre os arquivos
     FILE *dadosBIN, *indiceBIN;
@@ -25,22 +26,38 @@ void Funcionalidade5(char *nomeDadosBIN, char *nomeIndiceBIN){
 
     // verifica consistência do arquivo de dados
     if(cabDados.status == 0){ 
-        printf("Falha no processamento do arquivo.");
+        printf("Falha no processamento do arquivo.\n");
         fclose(dadosBIN);
         fclose(indiceBIN);
         return;
     }
 
     // inicia leitura dos registros, colocando o numero do primeiro registro como zero
-    int numeroRRN = 0;
-    registroDados = regDados;
+    registroDados regDados;
+    int RRNdados = 0;
 
     // lê o primeiro registro de dados do arquivo binário
-    LeRegistroDados(dadosBIN, &regDados);
-    
-    // cria a chave de busca a partir de NomeTecnologiaOrigem e NomeTecnologiaDestino
-    // TODO: retirar o /0 que tem no final dos dois
-    strcat(regDados.TecnologiaOrigem.nome, regDados.TecnologiaDestino.nome);
+    fread(&(regDados.removido), sizeof(char), 1, dadosBIN);
+
+    if(regDados.removido == '1'){ // se o registro foi removido, pula para o próximo registro
+        fseek(dadosBIN, TAM_REGISTRO - 1, SEEK_CUR);
+    }
+    else{
+        LeRegistroDados(dadosBIN, &regDados);
+
+        // cria a chave de busca a partir de NomeTecnologiaOrigem e NomeTecnologiaDestino
+        char *chaveDeBusca = strcat(regDados.TecnologiaOrigem.nome, regDados.TecnologiaDestino.nome);
+
+        InsereArvoreB(indiceBIN, &cabInd, chaveDeBusca, RRNdados);
+
+        free(regDados.TecnologiaOrigem.nome);
+        free(regDados.TecnologiaDestino.nome);
+        int tamLixo = TAM_REGISTRO - (regDados.TecnologiaOrigem.tamanho + regDados.TecnologiaDestino.tamanho) * (sizeof(char)) - TAM_REGISTRO_FIXO;
+        fseek(dadosBIN, tamLixo, SEEK_CUR);
+    }
+
+    RRNdados++;
+   
  
     
 
@@ -64,7 +81,7 @@ void Funcionalidade5(char *nomeDadosBIN, char *nomeIndiceBIN){
     // registros logicamente removidos são contabilizados no nroParesTecnologias?
     
 
-}*/
+}
 
 void BuscaArquivoDadosCriterio(FILE *dadosBIN, char *nomeCampo){
     registroDados regDados;

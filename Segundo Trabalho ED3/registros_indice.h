@@ -28,9 +28,9 @@ typedef struct{
 
 void EscreveCabecalhoIndice(FILE *bin, cabecalhoIndice cabInd);
 
-void EscrevePagina(FILE *bin, paginaIndice pagInd);
-
 void LeCabecalhoIndice(FILE *bin, cabecalhoIndice *cabInd);
+
+void EscrevePaginaIndice(FILE *bin, paginaIndice pagInd);
 
 void LePaginaIndice(FILE *bin, paginaIndice *pagInd);
 

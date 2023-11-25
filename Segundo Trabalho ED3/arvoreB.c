@@ -1,5 +1,7 @@
-//Nome: Gabriel Balbão Bazon - NUSP: 13676408
-//Nome: Giovanna de Freitas Velasco - NUSP: 13676346
+/*
+Nome: Gabriel Balbão Bazon - NUSP: 13676408
+Nome: Giovanna de Freitas Velasco - NUSP: 13676346
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,6 +13,7 @@ int BuscaBinariaPagina(paginaIndice *pagInd, int inicio, int fim, char *chaveBus
         *indexNoFilho = inicio;
         return -1;
     }
+
     else{
         int meio = (inicio + fim) / 2;
         int valorRetorno = strncmp(chaveBuscada, pagInd->C[meio], tamChave);
@@ -53,4 +56,36 @@ int BuscaArvoreB(FILE *indiceBIN, char *chaveBuscada){
 
     paginaIndice pagInd;
     BuscaRecursivaArvoreB(indiceBIN, &pagInd, chaveBuscada, tamChave);
+}
+
+void CriaNoRaiz(FILE *indiceBIN, cabecalhoIndice *cabInd){
+    paginaIndice novaPagInd;
+    novaPagInd.nroChaveNo = 0;
+    novaPagInd.alturaNo = 0; ////////////////////////////////////
+    novaPagInd.RRNdoNo = cabInd->RRNproxNo;
+
+    for(int i = 0; i < 3; i++){
+        novaPagInd.P[i] = -1;
+
+        for(int j = 0; j < TAM_CAMPO_INDICES; j++)
+            novaPagInd.C[i][j] = CHAR_LIXO;
+
+        novaPagInd.PR[i] = -1;
+    }
+
+    novaPagInd.P[3] = -1;
+
+    EscrevePaginaIndice(indiceBIN, novaPagInd);
+
+
+    cabInd->RRNproxNo++;
+}
+
+// if BuscaBinariaPagina(pagInd, 0, pagInd->nroChaveNo - 1, chaveBuscada, tamChave, &indexNoFilho) == -1 && indexNoFilho == -1 
+    // não encontrou o elemento e chegou em um nó folha
+
+void InsereArvoreB(FILE *indiceBIN, cabecalhoIndice *cabInd, char *chaveDeBusca, int RRNdados){
+    if(cabInd->noRaiz == -1){
+        CriaNoRaiz(indiceBIN, cabInd);
+    }
 }

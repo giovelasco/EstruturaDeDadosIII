@@ -105,7 +105,7 @@ void EscreveRegistroDados(FILE *bin, registroDados regDados){
     
     // escreve o lixo nos bytes restantes
     for(int i = 0; i < tamLixo; i++){
-        fwrite(CHAR_LIXO, sizeof(char), 1, bin);
+        fwrite(STRING_LIXO, sizeof(char), 1, bin);
     }
 
     // libera memória alocada

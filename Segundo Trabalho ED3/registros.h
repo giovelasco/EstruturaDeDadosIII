@@ -9,7 +9,8 @@ Nome: Giovanna de Freitas Velasco - NUSP: 13676346
 #define TAM_CABECALHO 13
 #define TAM_REGISTRO 76
 #define TAM_REGISTRO_FIXO 21
-#define CHAR_LIXO "$"
+#define STRING_LIXO "$"
+#define CHAR_LIXO '$'
 
 // define struct para o registo de cabecalho do arquivo de dados com 13 bytes 
 typedef struct{
