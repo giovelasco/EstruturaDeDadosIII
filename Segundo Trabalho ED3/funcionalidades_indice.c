@@ -12,7 +12,7 @@ void Funcionalidade5(char *nomeDadosBIN, char *nomeIndiceBIN){
     // abre os arquivos
     FILE *dadosBIN, *indiceBIN;
     dadosBIN = AbrirArquivo(dadosBIN, nomeDadosBIN, "rb");
-    indiceBIN = AbrirArquivo(indiceBIN, nomeIndiceBIN, "wb");
+    indiceBIN = AbrirArquivo(indiceBIN, nomeIndiceBIN, "wb+");
     if(dadosBIN == NULL || indiceBIN == NULL) return;
 
     // escreve cabeçalho no início do arquivo de índices
@@ -40,32 +40,31 @@ void Funcionalidade5(char *nomeDadosBIN, char *nomeIndiceBIN){
     // inicia leitura dos registros, colocando o numero do primeiro registro como zero
     registroDados regDados;
     int RRNdados = 0;
+    for(int mp = 0; mp < 3; mp++){
+        // lê o primeiro registro de dados do arquivo binário
+        fread(&(regDados.removido), sizeof(char), 1, dadosBIN);
 
-    // lê o primeiro registro de dados do arquivo binário
-    fread(&(regDados.removido), sizeof(char), 1, dadosBIN);
+        if(regDados.removido == '1'){ // se o registro foi removido, pula para o próximo registro
+            fseek(dadosBIN, TAM_REGISTRO - 1, SEEK_CUR);
+        }
+        else{
+            LeRegistroDados(dadosBIN, &regDados);
 
-    if(regDados.removido == '1'){ // se o registro foi removido, pula para o próximo registro
-        fseek(dadosBIN, TAM_REGISTRO - 1, SEEK_CUR);
+            // cria a chave de busca a partir de NomeTecnologiaOrigem e NomeTecnologiaDestino
+            char chaveDeBusca[56];
+            strcpy(chaveDeBusca, regDados.TecnologiaOrigem.nome);
+            strcat(chaveDeBusca, regDados.TecnologiaDestino.nome);
+
+            InsereArvoreB(indiceBIN, &cabInd, chaveDeBusca, RRNdados);
+
+            free(regDados.TecnologiaOrigem.nome);
+            free(regDados.TecnologiaDestino.nome);
+            int tamLixo = TAM_REGISTRO - (regDados.TecnologiaOrigem.tamanho + regDados.TecnologiaDestino.tamanho) * (sizeof(char)) - TAM_REGISTRO_FIXO;
+            fseek(dadosBIN, tamLixo, SEEK_CUR);
+        }
+
+        RRNdados++;
     }
-    else{
-        LeRegistroDados(dadosBIN, &regDados);
-
-        // cria a chave de busca a partir de NomeTecnologiaOrigem e NomeTecnologiaDestino
-        char chaveDeBusca[56];
-        strcpy(chaveDeBusca, regDados.TecnologiaOrigem.nome);
-        strcat(chaveDeBusca, regDados.TecnologiaDestino.nome);
-        printf("%s\n", chaveDeBusca);
-
-        InsereArvoreB(indiceBIN, &cabInd, chaveDeBusca, RRNdados);
-
-        free(regDados.TecnologiaOrigem.nome);
-        free(regDados.TecnologiaDestino.nome);
-        int tamLixo = TAM_REGISTRO - (regDados.TecnologiaOrigem.tamanho + regDados.TecnologiaDestino.tamanho) * (sizeof(char)) - TAM_REGISTRO_FIXO;
-        fseek(dadosBIN, tamLixo, SEEK_CUR);
-    }
-
-    RRNdados++;
-   
  
     
 

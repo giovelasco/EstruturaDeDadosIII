@@ -31,8 +31,8 @@ void EscreveCabecalhoIndice(FILE *bin, cabecalhoIndice cabInd);
 
 void LeCabecalhoIndice(FILE *bin, cabecalhoIndice *cabInd);
 
-void EscrevePaginaIndice(FILE *bin, paginaIndice *pagInd);
+void EscrevePaginaIndice(FILE *bin, paginaIndice pagInd);
 
 void LePaginaIndice(FILE *bin, paginaIndice *pagInd);
 
-void ImprimePaginaIndice(paginaIndice *pagInd);
+void ImprimePaginaIndice(paginaIndice pagInd);
