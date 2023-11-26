@@ -48,7 +48,7 @@ int main(){
             free(nomeDadosBIN);
             break;
 
-        /*// funcionalidade 5
+        // funcionalidade 5
         case 5:
             nomeDadosBIN = readline();
             nomeIndiceBIN = readline();
@@ -57,7 +57,7 @@ int main(){
             free(nomeIndiceBIN);
             break;
         
-        */
+        
         // funcionalidade 6
         case 6:
             nomeDadosBIN = readline();

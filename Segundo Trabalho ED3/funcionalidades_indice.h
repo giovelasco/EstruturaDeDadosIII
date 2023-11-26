@@ -13,7 +13,7 @@ arquivo de dados de entrada já existente
  * @param nomeDadosBIN nome do arquivo de dados .bin
  * @param nomeIndiceBIN nome do arquivo de índice árvore-B .bin
 */
-//void Funcionalidade5(char *nomeDadosBIN, char *nomeIndiceBIN);
+void Funcionalidade5(char *nomeDadosBIN, char *nomeIndiceBIN);
 
 /**
  * Permite a recuperação dos dados de todos os registros de um arquivo de dados de

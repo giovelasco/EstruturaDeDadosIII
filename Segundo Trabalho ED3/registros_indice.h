@@ -12,6 +12,7 @@ typedef struct{
     char status;
     int noRaiz;
     int RRNproxNo;
+    char lixo[197];
 } cabecalhoIndice;
 
 
@@ -21,7 +22,7 @@ typedef struct{
     int RRNdoNo;
 
     int P[4]; // ponteiro para uma subárvore
-    char C[3][55]; // chave de busca - tamanho 55
+    char C[3][56]; // chave de busca - tamanho 55 + byte para o /0
     int PR[3]; // campo de referencia para o registro de dados
 } paginaIndice;
 

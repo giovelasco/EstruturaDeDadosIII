@@ -17,6 +17,11 @@ void Funcionalidade5(char *nomeDadosBIN, char *nomeIndiceBIN){
 
     // escreve cabeçalho no início do arquivo de índices
     cabecalhoIndice cabInd = (cabecalhoIndice){.noRaiz = -1, .RRNproxNo = 0};
+
+    for(int i = 0; i < 196; i++){
+        cabInd.lixo[i] = CHAR_LIXO;
+    }
+
     cabInd.status = '0'; //arquivo binário aberto para escrita
     EscreveCabecalhoIndice(indiceBIN, cabInd);
 
@@ -46,7 +51,10 @@ void Funcionalidade5(char *nomeDadosBIN, char *nomeIndiceBIN){
         LeRegistroDados(dadosBIN, &regDados);
 
         // cria a chave de busca a partir de NomeTecnologiaOrigem e NomeTecnologiaDestino
-        char *chaveDeBusca = strcat(regDados.TecnologiaOrigem.nome, regDados.TecnologiaDestino.nome);
+        char chaveDeBusca[56];
+        strcpy(chaveDeBusca, regDados.TecnologiaOrigem.nome);
+        strcat(chaveDeBusca, regDados.TecnologiaDestino.nome);
+        printf("%s\n", chaveDeBusca);
 
         InsereArvoreB(indiceBIN, &cabInd, chaveDeBusca, RRNdados);
 

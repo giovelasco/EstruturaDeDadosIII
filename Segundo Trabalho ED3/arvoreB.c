@@ -34,6 +34,7 @@ int BuscaRecursivaArvoreB(FILE *indiceBIN, paginaIndice *pagInd, char *chaveDeBu
     int RRNdados;
 
     LePaginaIndice(indiceBIN, pagInd);
+    ImprimePaginaIndice(pagInd);
     RRNdados = BuscaBinariaPagina(pagInd, 0, pagInd->nroChaveNo - 1, chaveDeBusca, tamChave, indexNoFilho);
 
     if(RRNdados == -1){ // não encontrou a chave no nó
@@ -72,7 +73,8 @@ void CriaNoFolha(FILE *indiceBIN, cabecalhoIndice *cabInd){
 
         for(int j = 0; j < TAM_CAMPO_INDICES; j++)
             novaPagInd.C[i][j] = CHAR_LIXO;
-
+            
+        novaPagInd.C[i][55] = '\0';
         novaPagInd.PR[i] = -1;
     }
 
@@ -90,18 +92,19 @@ void Split(){
 }
 
 void InsereChaveNo(FILE *indiceBIN, paginaIndice *pagInd, char *chaveDeBusca, int indexNoFilho, int RRNdados){
-    
+    // desloca as chaves dentro da página
     for(int i = pagInd->nroChaveNo; i > indexNoFilho; i--){
         strcpy(pagInd->C[i], pagInd->C[i - 1]);
         pagInd->PR[i] = pagInd->PR[i - 1];
     }
 
+    // insere a chave de busca e seu RRN correspondente na posição correta
+    pagInd->PR[indexNoFilho] = RRNdados;   
     strcpy(pagInd->C[indexNoFilho], chaveDeBusca);
     for(int i = strlen(chaveDeBusca); i < TAM_CAMPO_INDICES; i++)
-        pagInd->C[indexNoFilho][i] = CHAR_LIXO;
+        pagInd->C[indexNoFilho][i] = CHAR_LIXO; 
 
-    pagInd->PR[indexNoFilho] = RRNdados;    
-
+    // incrementa o número de chaves presentes no nó
     pagInd->nroChaveNo++;
     EscrevePaginaIndice(indiceBIN, pagInd);
 }
@@ -110,6 +113,7 @@ void InsereChaveNo(FILE *indiceBIN, paginaIndice *pagInd, char *chaveDeBusca, in
 void InsereArvoreB(FILE *indiceBIN, cabecalhoIndice *cabInd, char *chaveDeBusca, int RRNdados){
     paginaIndice pagInd;
     int tamChave = strlen(chaveDeBusca);
+    printf("%d\n", tamChave);
     int indexNoFilho;
 
     if(cabInd->noRaiz == -1){

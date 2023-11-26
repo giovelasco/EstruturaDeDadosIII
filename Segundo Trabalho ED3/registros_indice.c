@@ -11,6 +11,7 @@ void EscreveCabecalhoIndice(FILE *bin, cabecalhoIndice cabInd){
     fwrite(&(cabInd.status), sizeof(char), 1, bin);
     fwrite(&(cabInd.noRaiz), sizeof(int), 1, bin);
     fwrite(&(cabInd.RRNproxNo), sizeof(int), 1, bin);
+    fwrite(&(cabInd.lixo), sizeof(char), 196, bin);
 }
 
 void LeCabecalhoIndice(FILE *bin, cabecalhoIndice *cabInd){
@@ -18,7 +19,6 @@ void LeCabecalhoIndice(FILE *bin, cabecalhoIndice *cabInd){
     fread(&(cabInd->noRaiz), sizeof(int), 1, bin);
     fread(&(cabInd->RRNproxNo), sizeof(int), 1, bin);
 }
-
 
 void EscrevePaginaIndice(FILE *bin, paginaIndice *pagInd){
     fwrite(&(pagInd->nroChaveNo), sizeof(int), 1, bin);
@@ -42,6 +42,7 @@ void LePaginaIndice(FILE *bin, paginaIndice *pagInd){
     for(int i = 0; i < 3; i++){
         fread(&(pagInd->P[i]), sizeof(int), 1, bin);
         fread(&(pagInd->C[i]), sizeof(char), 55, bin);
+        pagInd->C[i][55] = '\0';
         fread(&(pagInd->PR[i]), sizeof(int), 1, bin);
     }
 
