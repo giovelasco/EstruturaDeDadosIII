@@ -1,0 +1,51 @@
+Dicas Trabalho 1:
+- Inserção na árvore B: começa por uma busca; fazer recursividade; ficar atento - quando dar overflow, retornar pra função de cima com uma chave. 
+Ideia: 
+Inserção(){
+   if(ponteiro == -1)
+        return chave;
+   ponteiro = buscaBinaria();
+   chave = Inserção();
+}
+
+- Criar uma função que lê a árvore B e imprime o que tem nela: debugar
+
+- Função Split:
+Ideia:
+InserçãoNo(ponteiroNo, chave){
+    if(espaço)
+       Insere();
+    else
+       return split(ponteitoNo, chave);
+}
+
+split(ponteiroNo, chave){
+    no = lerPonteiroNo();
+    no = colocar o();
+    escreveNo1();
+    escreveNo2();
+}
+
+Dica: fazer split geral, a diferença entre no folha é tem ponteiro -1. A promoção da chave chama a inserção de novo, recursivamente.
+
+
+
+
+
+
+
+
+/////////////////////////////////////// FEITAS ////////////////////////////////////////
+
+Dica: começar a implementação pela busca na árvore B, que é mais fácil de implementar.
+
+struct{
+    int P[4];
+    int PR[3];
+    char C[3][55];
+}
+
+- Busca na chave feita com busca binária
+
+- Fazer um arquivo separado para árvore B : inserção e busca 
+
