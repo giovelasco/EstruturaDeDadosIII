@@ -58,7 +58,7 @@ int BuscaArvoreB(FILE *indiceBIN, char *chaveDeBusca){
     BuscaRecursivaArvoreB(indiceBIN, &pagInd, chaveDeBusca, tamChave, &indexNoFilho);
 }
 
-void CriaNoFolha(FILE *indiceBIN, cabecalhoIndice *cabInd){
+paginaIndice CriaNoFolha(FILE *indiceBIN, cabecalhoIndice *cabInd){
     paginaIndice novaPagInd;
     novaPagInd.nroChaveNo = 0;
     novaPagInd.alturaNo = 1; 
@@ -78,11 +78,10 @@ void CriaNoFolha(FILE *indiceBIN, cabecalhoIndice *cabInd){
 
     EscrevePaginaIndice(indiceBIN, novaPagInd);
     cabInd->RRNproxNo++;
+
+    return novaPagInd;
 }
 
-void Split(){
-
-}
 
 void InsereChaveNo(FILE *indiceBIN, paginaIndice *pagInd, char *chaveDeBusca, int indexNoFilho, int RRNdados){
     // desloca as chaves dentro da página
@@ -104,6 +103,60 @@ void InsereChaveNo(FILE *indiceBIN, paginaIndice *pagInd, char *chaveDeBusca, in
     EscrevePaginaIndice(indiceBIN, *pagInd);
 }
 
+DistribuicaoDasChaves(paginaIndice *pagInd, paginaIndice *novoNoADireita, int indexNoFilho, char *chaveDeBusca){
+    for(int i = pagInd->nroChaveNo; i > indexNoFilho; i--){
+        strcpy(pagInd->C[i], pagInd->C[i - 1]);
+        pagInd->PR[i] = pagInd->PR[i - 1];
+    }
+}
+
+void Split(FILE *indiceBIN, paginaIndice *pagInd, cabecalhoIndice *cabInd, char *chaveDeBusca, int indexNoFilho, int RRNdados){
+    // cria um nó e armazena-o em memória primária
+    paginaIndice novoNoADireita = CriaNoFolha(indiceBIN, cabInd);
+
+    //fseek(indiceBIN, -TAM_REGISTRO_INDICES, SEEK_CUR);
+    //LePaginaIndice(indiceBIN, &novoNoADireita);
+
+    if(indexNoFilho == 4){
+        novoNoADireita.PR[0] = RRNdados;   
+        strcpy(pagInd->C[0], chaveDeBusca);
+        for(int i = strlen(chaveDeBusca); i < TAM_CAMPO_INDICES; i++)
+            novoNoADireita.C[0][i] = CHAR_LIXO; 
+
+    // incrementa o número de chaves presentes no nó
+    novoNoADireita.nroChaveNo++;
+    }
+
+    DistribuicaoDasChaves(pagInd, &novoNoADireita, indexNoFilho, *chaveDeBusca);
+
+
+    /*
+    Criar novo nó
+    colocar em memória primária junto com a pagina que está cheia
+    A quantidade de chaves presentes no primeiro nó são 3, uma chave de busca pra inserir e no nó segundo são 0.
+    Ordenar as quatro chaves
+    Colocar as duas primeiras chaves no nó que já existia e fazer os ajustes necessários
+    Colocar a ultima chave no novo nó criado
+    Promover a terceira chave - voltar na árvore e ver se tem lugar disponível (verificar se é nó raiz?)
+
+
+    */
+}
+
+void SplitNoRaiz(){
+
+    /*
+    Criar novo nó
+    colocar em memória primária junto com a pagina que está cheia
+    A quantidade de chaves presentes no primeiro nó são 3, uma chave de busca pra inserir e no nó segundo são 0.
+    Ordenar as quatro chaves
+    Colocar as duas primeiras chaves no nó que já existia e fazer os ajustes necessários
+    Colocar a ultima chave no novo nó criado
+    Criar novo nó raiz
+    colocar a terceira chave nele e fazer os ajustes
+    */
+   
+}
 
 void InsereArvoreB(FILE *indiceBIN, cabecalhoIndice *cabInd, char *chaveDeBusca, int RRNdados){
     paginaIndice pagInd;
@@ -122,7 +175,13 @@ void InsereArvoreB(FILE *indiceBIN, cabecalhoIndice *cabInd, char *chaveDeBusca,
     if(BuscaRecursivaArvoreB(indiceBIN, &pagInd, chaveDeBusca, tamChave, &indexNoFilho) == -1){
         if(pagInd.nroChaveNo < 3)
             InsereChaveNo(indiceBIN, &pagInd, chaveDeBusca, indexNoFilho, RRNdados);
-        else
-            Split();
+        else{
+            // fazer verificação aqui se é split de nó raiz?
+            if(cabInd->noRaiz == pagInd.RRNdoNo)
+                SplitNoRaiz();
+            else
+                Split(indiceBIN, &pagInd, cabInd, chaveDeBusca, indexNoFilho, RRNdados);
+        }
     }
+
 }

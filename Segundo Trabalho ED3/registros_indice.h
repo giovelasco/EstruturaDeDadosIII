@@ -7,6 +7,7 @@ Nome: Giovanna de Freitas Velasco - NUSP: 13676346
 
 #define TAM_REGISTRO_INDICES 205
 #define TAM_CAMPO_INDICES 55
+#define NUM_CHAVES_PAGINA 3
 
 typedef struct{
     char status;
@@ -21,9 +22,9 @@ typedef struct{
     int alturaNo;
     int RRNdoNo;
 
-    int P[4]; // ponteiro para uma subárvore
-    char C[3][56]; // chave de busca - tamanho 55 + byte para o /0
-    int PR[3]; // campo de referencia para o registro de dados
+    int P[NUM_CHAVES_PAGINA + 1]; // ponteiro para uma subárvore
+    char C[NUM_CHAVES_PAGINA][TAM_CAMPO_INDICES + 1]; // chave de busca - tamanho 55 + byte para o /0
+    int PR[NUM_CHAVES_PAGINA]; // campo de referencia para o registro de dados
 } paginaIndice;
 
 

@@ -70,8 +70,6 @@ void Funcionalidade5(char *nomeDadosBIN, char *nomeIndiceBIN){
 
     // cria o primeiro nó no arquivo de indices
     
-
-
     // a busca começa pelo nó raiz
     // no raiz é nulo inicialmente -> cria um novo nó
     // nó 0 criado
@@ -90,7 +88,7 @@ void Funcionalidade5(char *nomeDadosBIN, char *nomeIndiceBIN){
 
 }
 
-void BuscaArquivoDadosCriterio(FILE *dadosBIN, char *nomeCampo){
+void BuscaArquivoDadosCriterio(FILE *dadosBIN, char *nomeCampo){ // funcionalidade 3
     registroDados regDados;
 
     fseek(dadosBIN, 13, SEEK_SET); // pula o cabeçalho do arquivo
@@ -149,7 +147,7 @@ void BuscaArquivoDadosCriterio(FILE *dadosBIN, char *nomeCampo){
         printf("Registro inexistente.\n");
 }
 
-void BuscaArquivoDadosRRN(FILE *dadosBIN, int RRN){
+void BuscaArquivoDadosRRN(FILE *dadosBIN, int RRN){ // funcionalidade 4
     // calcula posição do byteoffset
     int byteoffset = CalculaByteOffset(RRN);
 
