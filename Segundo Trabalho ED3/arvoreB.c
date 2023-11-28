@@ -70,7 +70,7 @@ paginaIndice CriaNoFolha(FILE *indiceBIN, cabecalhoIndice *cabInd){
         for(int j = 0; j < TAM_CAMPO_INDICES; j++)
             novaPagInd.C[i][j] = CHAR_LIXO;
             
-        novaPagInd.C[i][55] = '\0';
+        novaPagInd.C[i][TAM_CAMPO_INDICES] = '\0';
         novaPagInd.PR[i] = -1;
     }
 
@@ -84,6 +84,8 @@ paginaIndice CriaNoFolha(FILE *indiceBIN, cabecalhoIndice *cabInd){
 
 
 void InsereChaveNo(FILE *indiceBIN, paginaIndice *pagInd, char *chaveDeBusca, int indexNoFilho, int RRNdados){
+    //TODO: deixar a inserção generica levando juntos os ponteiros P esquerdo e direito (verificar)
+
     // desloca as chaves dentro da página
     for(int i = pagInd->nroChaveNo; i > indexNoFilho; i--){
         strcpy(pagInd->C[i], pagInd->C[i - 1]);
@@ -103,44 +105,45 @@ void InsereChaveNo(FILE *indiceBIN, paginaIndice *pagInd, char *chaveDeBusca, in
     EscrevePaginaIndice(indiceBIN, *pagInd);
 }
 
-DistribuicaoDasChaves(paginaIndice *pagInd, paginaIndice *novoNoADireita, int indexNoFilho, char *chaveDeBusca){
-    for(int i = pagInd->nroChaveNo; i > indexNoFilho; i--){
-        strcpy(pagInd->C[i], pagInd->C[i - 1]);
-        pagInd->PR[i] = pagInd->PR[i - 1];
-    }
-}
-
-void Split(FILE *indiceBIN, paginaIndice *pagInd, cabecalhoIndice *cabInd, char *chaveDeBusca, int indexNoFilho, int RRNdados){
+void Split(FILE *indiceBIN, paginaIndice *pagEsquerda, cabecalhoIndice *cabInd, char *chaveDeBusca, int indexNoFilho, int RRNdados){
     // cria um nó e armazena-o em memória primária
-    paginaIndice novoNoADireita = CriaNoFolha(indiceBIN, cabInd);
+    paginaIndice novaPagDireita = CriaNoFolha(indiceBIN, cabInd);
 
-    //fseek(indiceBIN, -TAM_REGISTRO_INDICES, SEEK_CUR);
-    //LePaginaIndice(indiceBIN, &novoNoADireita);
+    int indexASerPromovido = (NUM_CHAVES_PAGINA + 1) / 2;
 
-    if(indexNoFilho == 4){
-        novoNoADireita.PR[0] = RRNdados;   
-        strcpy(pagInd->C[0], chaveDeBusca);
-        for(int i = strlen(chaveDeBusca); i < TAM_CAMPO_INDICES; i++)
-            novoNoADireita.C[0][i] = CHAR_LIXO; 
+    if(indexNoFilho > indexASerPromovido){ // chave será inserida no nó à direita
+        // copia os elementos depois do meio, do nó à esquerda para o nó à direita
+        for(int i = indexASerPromovido + 1; i < NUM_CHAVES_PAGINA; i++){
+            CopiaElementoPagina(&novaPagDireita, pagEsquerda, (i - indexASerPromovido + 1), i);
 
-    // incrementa o número de chaves presentes no nó
-    novoNoADireita.nroChaveNo++;
+            ApagaElementoPagina(pagEsquerda, i);
+        }
+        // o caso i = NUM_CHAVES_PAGINA precisa ocorrer apenas para o ponteiro P dos elementos
+        novaPagDireita.P[NUM_CHAVES_PAGINA - indexASerPromovido] = pagEsquerda->P[NUM_CHAVES_PAGINA]; 
+
+        Promove(indexASerPromovido);
+        ApagaElementoPagina(pagEsquerda, indexASerPromovido);
+        InsereChaveNo(indiceBIN, &novaPagDireita, chaveDeBusca, indexNoFilho, RRNdados);
+    } 
+    else{ // a chave será inserida no nó à esquerda ou será promovida
+        // copia os elementos depois do meio, do nó à esquerda para o nó à direita
+        for(int i = indexASerPromovido; i < NUM_CHAVES_PAGINA; i++){
+            CopiaElementoPagina(&novaPagDireita, pagEsquerda, (i - indexASerPromovido), i);
+
+            ApagaElementoPagina(pagEsquerda, i);
+        }
+        // o caso i = NUM_CHAVES_PAGINA precisa ocorrer apenas para o ponteiro P dos elementos
+        novaPagDireita.P[NUM_CHAVES_PAGINA - indexASerPromovido] = pagEsquerda->P[NUM_CHAVES_PAGINA]; 
+
+        if(indexNoFilho < indexASerPromovido){
+            Promove(indexASerPromovido);
+            ApagaElementoPagina(pagEsquerda, indexASerPromovido);
+            InsereChaveNo(indiceBIN, pagEsquerda, chaveDeBusca, indexNoFilho, RRNdados);
+        }
+        else{ // indexNoFilho == indexASerPromovido
+            Promove(indexNoFilho);
+        }
     }
-
-    DistribuicaoDasChaves(pagInd, &novoNoADireita, indexNoFilho, *chaveDeBusca);
-
-
-    /*
-    Criar novo nó
-    colocar em memória primária junto com a pagina que está cheia
-    A quantidade de chaves presentes no primeiro nó são 3, uma chave de busca pra inserir e no nó segundo são 0.
-    Ordenar as quatro chaves
-    Colocar as duas primeiras chaves no nó que já existia e fazer os ajustes necessários
-    Colocar a ultima chave no novo nó criado
-    Promover a terceira chave - voltar na árvore e ver se tem lugar disponível (verificar se é nó raiz?)
-
-
-    */
 }
 
 void SplitNoRaiz(){
