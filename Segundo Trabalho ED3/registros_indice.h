@@ -8,6 +8,7 @@ Nome: Giovanna de Freitas Velasco - NUSP: 13676346
 #define TAM_REGISTRO_INDICES 205
 #define TAM_CAMPO_INDICES 55
 #define NUM_CHAVES_PAGINA 3
+#define CHAR_LIXO '$'
 
 typedef struct{
     char status;
@@ -37,3 +38,10 @@ void EscrevePaginaIndice(FILE *bin, paginaIndice pagInd);
 void LePaginaIndice(FILE *bin, paginaIndice *pagInd);
 
 void ImprimePaginaIndice(paginaIndice pagInd);
+
+
+// colocar na descrição que apaga APENAS o P à direita!!!!
+void ApagaElementoPagina(paginaIndice *pagInd, int posicao);
+
+// colocar na descrição que copia APENAS o P à esquerda!!!!
+void CopiaElementoPagina(paginaIndice *pagIndDireita, paginaIndice *pagIndEsquerda, int posDireita, int posEsquerda);

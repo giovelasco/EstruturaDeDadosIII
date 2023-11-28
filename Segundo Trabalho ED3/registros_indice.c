@@ -62,3 +62,20 @@ void ImprimePaginaIndice(paginaIndice pagInd){
 
     printf("P[3]: %d\n", pagInd.P[3]);
 }
+
+void ApagaElementoPagina(paginaIndice *pagInd, int posicao){
+    for(int j = 0; j < TAM_CAMPO_INDICES; j++)
+        pagInd->C[posicao][j] = CHAR_LIXO;
+    pagInd->C[posicao][TAM_CAMPO_INDICES] = '\0';
+
+    pagInd->PR[posicao] = -1;
+    pagInd->P[posicao + 1] = -1;
+
+    pagInd->nroChaveNo--;
+}
+
+void CopiaElementoPagina(paginaIndice *pagIndDireita, paginaIndice *pagIndEsquerda, int posDireita, int posEsquerda){
+    pagIndDireita->P[posDireita] = pagIndEsquerda->P[posEsquerda];
+    strcpy(pagIndDireita->C[posDireita], pagIndEsquerda->C[posEsquerda]);
+    pagIndDireita->PR[posDireita] = pagIndEsquerda->PR[posEsquerda];
+}
