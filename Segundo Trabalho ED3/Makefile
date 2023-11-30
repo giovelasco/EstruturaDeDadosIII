@@ -5,4 +5,4 @@ run :
 	./programaTrab
 
 val :
-	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./programaTrab < teste.in > teste.out
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./programaTrab < 8.in > teste.out

@@ -19,7 +19,7 @@ void Funcionalidade1(char *nomeCSV, char *nomeBIN){
     // escreve cabeçalho no início do arquivo binário
     cabecalho regCab = (cabecalho){.proxRRN = 0, .nroTecnologias = 0, .nroParesTecnologias = 0};
     regCab.status = '0'; // arquivo binário aberto para escrita
-    EscreveRegistroCabecalho(bin, regCab);
+    EscreveCabecalhoDados(bin, regCab);
 
     lista_t *l = CriaLista();
     registro regDados;
@@ -92,7 +92,7 @@ void Funcionalidade1(char *nomeCSV, char *nomeBIN){
     // sobrescreve o cabeçalho do arquivo binário
     fseek(bin, 0, SEEK_SET);
     regCab.status = '1'; // arquivo binário será fechado em seguida
-    EscreveRegistroCabecalho(bin, regCab);
+    EscreveCabecalhoDados(bin, regCab);
 
     // fecha os arquivos
     fclose(csv);

@@ -8,6 +8,71 @@ Nome: Giovanna de Freitas Velasco - NUSP: 13676346
 #include <string.h>
 #include "registros.h"
 
+void EscreveCabecalhoDados(FILE *bin, cabecalhoDados cabDados){
+    fwrite(&(cabDados.status), sizeof(char), 1, bin);
+    fwrite(&(cabDados.proxRRN), sizeof(int), 1, bin);
+    fwrite(&(cabDados.nroTecnologias), sizeof(int), 1, bin);
+    fwrite(&(cabDados.nroParesTecnologias), sizeof(int), 1, bin);
+}
+
+void LeCabecalhoDados(FILE *bin, cabecalhoDados *cabDados){
+    fread(&(cabDados->status), sizeof(char), 1, bin);
+    fread(&(cabDados->proxRRN), sizeof(int), 1, bin);
+    fread(&(cabDados->nroTecnologias), sizeof(int), 1, bin);
+    fread(&(cabDados->nroParesTecnologias), sizeof(int), 1, bin);
+}
+
+void EscreveRegistroDados(FILE *bin, registroDados regDados){ 
+    // calcula o tamanho o lixo
+    int tamLixo = TAM_REGISTRO - (regDados.TecnologiaOrigem.tamanho + regDados.TecnologiaDestino.tamanho) * (sizeof(char)) - TAM_REGISTRO_FIXO;
+
+    // marca o registro como não removido
+    regDados.removido = '0';
+    
+    fwrite(&(regDados.removido), sizeof(char), 1, bin);
+    fwrite(&(regDados.grupo), sizeof(int), 1, bin);
+    fwrite(&(regDados.popularidade), sizeof(int), 1, bin);
+    fwrite(&(regDados.peso), sizeof(int), 1, bin);
+    fwrite(&(regDados.TecnologiaOrigem.tamanho), sizeof(int), 1, bin);
+    fwrite(regDados.TecnologiaOrigem.nome, sizeof(char), regDados.TecnologiaOrigem.tamanho, bin);
+    fwrite(&(regDados.TecnologiaDestino.tamanho), sizeof(int), 1, bin);
+    fwrite(regDados.TecnologiaDestino.nome, sizeof(char), regDados.TecnologiaDestino.tamanho, bin);
+    
+    // escreve o lixo nos bytes restantes
+    for(int i = 0; i < tamLixo; i++){
+        fwrite(STRING_LIXO, sizeof(char), 1, bin);
+    }
+
+    // libera memória alocada
+    free(regDados.TecnologiaOrigem.nome);
+    free(regDados.TecnologiaDestino.nome);
+}
+
+void LeRegistroDados(FILE *bin, registroDados *regDados){
+    fread(&(regDados->grupo), sizeof(int), 1, bin);
+    fread(&(regDados->popularidade), sizeof(int), 1, bin);
+    fread(&(regDados->peso), sizeof(int), 1, bin);
+
+    fread(&(regDados->TecnologiaOrigem.tamanho), sizeof(int), 1, bin);
+    regDados->TecnologiaOrigem.nome = (char *) malloc((regDados->TecnologiaOrigem.tamanho + 1) * sizeof(char));
+    fread(regDados->TecnologiaOrigem.nome, sizeof(char), regDados->TecnologiaOrigem.tamanho, bin);
+    regDados->TecnologiaOrigem.nome[regDados->TecnologiaOrigem.tamanho] = '\0';
+
+    fread(&(regDados->TecnologiaDestino.tamanho), sizeof(int), 1, bin);
+    regDados->TecnologiaDestino.nome = (char *) malloc((regDados->TecnologiaDestino.tamanho + 1) * sizeof(char));
+    fread(regDados->TecnologiaDestino.nome, sizeof(char), regDados->TecnologiaDestino.tamanho, bin);
+    regDados->TecnologiaDestino.nome[regDados->TecnologiaDestino.tamanho] = '\0';
+}
+
+void ImprimeRegistro(registroDados regDados){
+    (strcmp(regDados.TecnologiaOrigem.nome, "\0") != 0) ? printf("%s, ", regDados.TecnologiaOrigem.nome) : printf("NULO, ");
+    (regDados.grupo != -1) ? printf("%d, ", regDados.grupo) : printf("NULO, ");
+    (regDados.popularidade != -1) ? printf("%d, ", regDados.popularidade) : printf("NULO, ");
+    (strcmp(regDados.TecnologiaDestino.nome, "\0") != 0) ? printf("%s, ", regDados.TecnologiaDestino.nome) : printf("NULO, ");
+    (regDados.peso != -1) ? printf("%d\r\n", regDados.peso) : printf("NULO\r\n");
+}
+
+
 int LeInteiro(char *campo){
     if(campo[0] == '\0')
         return -1;
@@ -47,70 +112,6 @@ void AlteraRegistro(registroDados *regDados, char *campo, int tamCampo, int deli
             regDados->peso = LeInteiro(campo);
             break;
     }
-}
-
-void LeCabecalhoDados(FILE *bin, cabecalhoDados *cabDados){
-    fread(&(cabDados->status), sizeof(char), 1, bin);
-    fread(&(cabDados->proxRRN), sizeof(int), 1, bin);
-    fread(&(cabDados->nroTecnologias), sizeof(int), 1, bin);
-    fread(&(cabDados->nroParesTecnologias), sizeof(int), 1, bin);
-}
-
-void LeRegistroDados(FILE *bin, registroDados *regDados){
-    fread(&(regDados->grupo), sizeof(int), 1, bin);
-    fread(&(regDados->popularidade), sizeof(int), 1, bin);
-    fread(&(regDados->peso), sizeof(int), 1, bin);
-
-    fread(&(regDados->TecnologiaOrigem.tamanho), sizeof(int), 1, bin);
-    regDados->TecnologiaOrigem.nome = (char *) malloc((regDados->TecnologiaOrigem.tamanho + 1) * sizeof(char));
-    fread(regDados->TecnologiaOrigem.nome, sizeof(char), regDados->TecnologiaOrigem.tamanho, bin);
-    regDados->TecnologiaOrigem.nome[regDados->TecnologiaOrigem.tamanho] = '\0';
-
-    fread(&(regDados->TecnologiaDestino.tamanho), sizeof(int), 1, bin);
-    regDados->TecnologiaDestino.nome = (char *) malloc((regDados->TecnologiaDestino.tamanho + 1) * sizeof(char));
-    fread(regDados->TecnologiaDestino.nome, sizeof(char), regDados->TecnologiaDestino.tamanho, bin);
-    regDados->TecnologiaDestino.nome[regDados->TecnologiaDestino.tamanho] = '\0';
-}
-
-void ImprimeRegistro(registroDados regDados){
-    (strcmp(regDados.TecnologiaOrigem.nome, "\0") != 0) ? printf("%s, ", regDados.TecnologiaOrigem.nome) : printf("NULO, ");
-    (regDados.grupo != -1) ? printf("%d, ", regDados.grupo) : printf("NULO, ");
-    (regDados.popularidade != -1) ? printf("%d, ", regDados.popularidade) : printf("NULO, ");
-    (strcmp(regDados.TecnologiaDestino.nome, "\0") != 0) ? printf("%s, ", regDados.TecnologiaDestino.nome) : printf("NULO, ");
-    (regDados.peso != -1) ? printf("%d\r\n", regDados.peso) : printf("NULO\r\n");
-}
-
-void EscreveRegistroCabecalho(FILE *bin, cabecalhoDados cabDados){
-    fwrite(&(cabDados.status), sizeof(char), 1, bin);
-    fwrite(&(cabDados.proxRRN), sizeof(int), 1, bin);
-    fwrite(&(cabDados.nroTecnologias), sizeof(int), 1, bin);
-    fwrite(&(cabDados.nroParesTecnologias), sizeof(int), 1, bin);
-}
-
-void EscreveRegistroDados(FILE *bin, registroDados regDados){ 
-    // calcula o tamanho o lixo
-    int tamLixo = TAM_REGISTRO - (regDados.TecnologiaOrigem.tamanho + regDados.TecnologiaDestino.tamanho) * (sizeof(char)) - TAM_REGISTRO_FIXO;
-
-    // marca o registro como não removido
-    regDados.removido = '0';
-    
-    fwrite(&(regDados.removido), sizeof(char), 1, bin);
-    fwrite(&(regDados.grupo), sizeof(int), 1, bin);
-    fwrite(&(regDados.popularidade), sizeof(int), 1, bin);
-    fwrite(&(regDados.peso), sizeof(int), 1, bin);
-    fwrite(&(regDados.TecnologiaOrigem.tamanho), sizeof(int), 1, bin);
-    fwrite(regDados.TecnologiaOrigem.nome, sizeof(char), regDados.TecnologiaOrigem.tamanho, bin);
-    fwrite(&(regDados.TecnologiaDestino.tamanho), sizeof(int), 1, bin);
-    fwrite(regDados.TecnologiaDestino.nome, sizeof(char), regDados.TecnologiaDestino.tamanho, bin);
-    
-    // escreve o lixo nos bytes restantes
-    for(int i = 0; i < tamLixo; i++){
-        fwrite(STRING_LIXO, sizeof(char), 1, bin);
-    }
-
-    // libera memória alocada
-    free(regDados.TecnologiaOrigem.nome);
-    free(regDados.TecnologiaDestino.nome);
 }
 
 int CalculaByteOffset(int RRN){

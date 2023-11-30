@@ -9,7 +9,7 @@ Nome: Giovanna de Freitas Velasco - NUSP: 13676346
 
 /**
  * Cria um arquivo de índice árvore-B que indexa a chave de busca definida sobre um
-arquivo de dados de entrada já existente
+arquivo de dados de entrada já existente.
  * @param nomeDadosBIN nome do arquivo de dados .bin
  * @param nomeIndiceBIN nome do arquivo de índice árvore-B .bin
 */
@@ -25,7 +25,8 @@ entrada, de forma que esses registros satisfaçam um critério de busca.
 void Funcionalidade6(char *nomeDadosBIN, char *nomeIndiceBIN, int n);
 
 /**
- * Permite a inserção de novos registros em um arquivo de dados de entrada.
+ * Permite a inserção de novos registros em um arquivo de dados de entrada e insere 
+sua chave correspondente em um arquivo de índices árvore-B.
  * @param nomeDadosBIN nome do arquivo de dados .bin
  * @param nomeIndiceBIN nome do arquivo de índice árvore-B .bin
  * @param n número de elementos a serem inseridos

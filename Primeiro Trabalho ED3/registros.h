@@ -95,7 +95,7 @@ void ImprimeRegistro(registro regDados);
  * @param bin ponteiro do arquivo binário
  * @param regCab struct do tipo registro de cabeçalho
 */
-void EscreveRegistroCabecalho(FILE *bin, cabecalho regCab);
+void EscreveCabecalhoDados(FILE *bin, cabecalho regCab);
 
 
 /**

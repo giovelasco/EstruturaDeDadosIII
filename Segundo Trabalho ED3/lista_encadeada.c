@@ -43,7 +43,8 @@ int BuscaElemento(lista_t *l, char *buscado){
 }
 
 void InsereLista(lista_t *l, char *aInserir){
-    if(BuscaElemento(l, aInserir) ==  1) // impõe não haver elemento repetido
+    // não pode haver elemento repetido ou nulo
+    if(strlen(aInserir) == 0 || BuscaElemento(l, aInserir) ==  1) 
         return;
 
     no_t *p = (no_t *) malloc(sizeof(no_t));

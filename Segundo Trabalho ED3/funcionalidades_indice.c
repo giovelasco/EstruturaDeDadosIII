@@ -18,15 +18,12 @@ void Funcionalidade5(char *nomeDadosBIN, char *nomeIndiceBIN){
         return;
     } 
 
-    // escreve cabeçalho no início do arquivo de índices
     cabecalhoIndice cabInd = (cabecalhoIndice){.noRaiz = -1, .RRNproxNo = 0};
-
-    for(int i = 0; i < 196; i++){
-        cabInd.lixo[i] = CHAR_LIXO;
-    }
+    memset(cabInd.lixo, CHAR_LIXO, 196); // preenche o lixo com o caractere definido para tal função
     cabInd.lixo[196] = '\0'; 
-
     cabInd.status = '0'; // arquivo binário aberto para escrita
+
+    // escreve o cabeçalho no arquivo de índices
     EscreveCabecalhoIndice(indiceBIN, cabInd);
 
     // lê o cabeçalho do arquivo binário de dados
@@ -41,39 +38,41 @@ void Funcionalidade5(char *nomeDadosBIN, char *nomeIndiceBIN){
         return;
     }
 
-    // inicia leitura dos registros, colocando o numero do primeiro registro como zero
+    // inicia leitura dos registros
     registroDados regDados;
-    int RRNdados = 0;
+    int RRNregDados = 0;
     int alturaArvore = 0;
     while(fread(&(regDados.removido), sizeof(char), 1, dadosBIN) != 0){
-        //fread(&(regDados.removido), sizeof(char), 1, dadosBIN);
-
         if(regDados.removido == '1'){ // se o registro foi removido, pula para o próximo registro
             fseek(dadosBIN, TAM_REGISTRO - 1, SEEK_CUR);
         }
         else{
             LeRegistroDados(dadosBIN, &regDados);
 
+            // verifica se o campo nomeTecnologiaDestino não é nulo
             if(strcmp(regDados.TecnologiaDestino.nome, "\0") != 0){
                 // cria a chave de busca a partir de NomeTecnologiaOrigem e NomeTecnologiaDestino
                 char chaveDeBusca[56];
                 strcpy(chaveDeBusca, regDados.TecnologiaOrigem.nome);
                 strcat(chaveDeBusca, regDados.TecnologiaDestino.nome);
 
-                InsercaoArvoreB(indiceBIN, &cabInd, chaveDeBusca, RRNdados, &alturaArvore);
+                InsercaoArvoreB(indiceBIN, &cabInd, chaveDeBusca, RRNregDados, &alturaArvore);
             }
 
             free(regDados.TecnologiaOrigem.nome);
             free(regDados.TecnologiaDestino.nome);
+
+            // pula o lixo restante
             int tamLixo = TAM_REGISTRO - (regDados.TecnologiaOrigem.tamanho + regDados.TecnologiaDestino.tamanho) * (sizeof(char)) - TAM_REGISTRO_FIXO;
             fseek(dadosBIN, tamLixo, SEEK_CUR);
         }
 
-        RRNdados++;
+        RRNregDados++;
     }
-    
+
+    // volta para o começo do arquivo, atualiza o status do arquivo de índices e escreve
     fseek(indiceBIN, 0, SEEK_SET);
-    cabInd.status = '1'; // tudo finalizado, manda pro abraço
+    cabInd.status = '1';
     fwrite(&(cabInd.status), sizeof(char), 1, indiceBIN);
 
     fclose(dadosBIN);
@@ -243,11 +242,9 @@ void Funcionalidade7(char *nomeDadosBIN, char *nomeIndiceBIN, int n){
 
     // faz a leitura do cabeçalho do arquivo de índices
     cabecalhoIndice cabInd;
-    for(int i = 0; i < 196; i++){
-        cabInd.lixo[i] = CHAR_LIXO;
-    }
+    memset(cabInd.lixo, CHAR_LIXO, 196); // preenche o lixo com o caractere definido para tal função
     cabInd.lixo[196] = '\0'; 
-    LeCabecalhoIndice(indiceBIN, &cabInd);
+    LeCabecalhoIndice(indiceBIN, &cabInd); 
 
     // verifica a consistência dos arquivos
     if(cabDados.status == '0' || cabInd.status == '0'){
@@ -263,11 +260,14 @@ void Funcionalidade7(char *nomeDadosBIN, char *nomeIndiceBIN, int n){
 
     lista_t *l = CriaLista();
     registroDados regDados;
+
     int alturaArvore;
     char *grupo;
     char *popularidade;
     char *peso;
 
+    int campoInteiro;
+    char *campoString;
     while(fread(&(regDados.removido), sizeof(char), 1, dadosBIN) != 0){
         if(regDados.removido == '1'){
             fseek(dadosBIN, TAM_REGISTRO - 1, SEEK_CUR);
@@ -276,24 +276,20 @@ void Funcionalidade7(char *nomeDadosBIN, char *nomeIndiceBIN, int n){
             fseek(dadosBIN, 12, SEEK_CUR);
 
             fread(&(regDados.TecnologiaOrigem.tamanho), sizeof(int), 1, dadosBIN);
-            if(regDados.TecnologiaOrigem.tamanho != 0){
-                regDados.TecnologiaOrigem.nome = (char *) malloc((regDados.TecnologiaOrigem.tamanho + 1) * sizeof(char));
-                fread(regDados.TecnologiaOrigem.nome, sizeof(char), regDados.TecnologiaOrigem.tamanho, dadosBIN);
-                regDados.TecnologiaOrigem.nome[regDados.TecnologiaOrigem.tamanho] = '\0';
-
-                InsereLista(l, regDados.TecnologiaOrigem.nome);
-                free(regDados.TecnologiaOrigem.nome);
-            }
+            regDados.TecnologiaOrigem.nome = (char *) malloc((regDados.TecnologiaOrigem.tamanho + 1) * sizeof(char));
+            fread(regDados.TecnologiaOrigem.nome, sizeof(char), regDados.TecnologiaOrigem.tamanho, dadosBIN);
+            regDados.TecnologiaOrigem.nome[regDados.TecnologiaOrigem.tamanho] = '\0';
 
             fread(&(regDados.TecnologiaDestino.tamanho), sizeof(int), 1, dadosBIN);
-            if(regDados.TecnologiaDestino.tamanho != 0){
-                regDados.TecnologiaDestino.nome = (char *) malloc((regDados.TecnologiaDestino.tamanho + 1) * sizeof(char));
-                fread(regDados.TecnologiaDestino.nome, sizeof(char), regDados.TecnologiaDestino.tamanho, dadosBIN);
-                regDados.TecnologiaDestino.nome[regDados.TecnologiaDestino.tamanho] = '\0';
+            regDados.TecnologiaDestino.nome = (char *) malloc((regDados.TecnologiaDestino.tamanho + 1) * sizeof(char));
+            fread(regDados.TecnologiaDestino.nome, sizeof(char), regDados.TecnologiaDestino.tamanho, dadosBIN);
+            regDados.TecnologiaDestino.nome[regDados.TecnologiaDestino.tamanho] = '\0';
 
-                InsereLista(l, regDados.TecnologiaDestino.nome);
-                free(regDados.TecnologiaDestino.nome);
-            }
+            InsereLista(l, regDados.TecnologiaOrigem.nome);          
+            InsereLista(l, regDados.TecnologiaDestino.nome);
+
+            free(regDados.TecnologiaDestino.nome);
+            free(regDados.TecnologiaOrigem.nome); 
 
             int tamLixo = TAM_REGISTRO - (regDados.TecnologiaOrigem.tamanho + regDados.TecnologiaDestino.tamanho) * (sizeof(char)) - TAM_REGISTRO_FIXO;
             fseek(dadosBIN, tamLixo, SEEK_CUR);
@@ -360,7 +356,7 @@ void Funcionalidade7(char *nomeDadosBIN, char *nomeIndiceBIN, int n){
     cabDados.status = '1';
     cabInd.status = '1';
 
-    EscreveRegistroCabecalho(dadosBIN, cabDados);
+    EscreveCabecalhoDados(dadosBIN, cabDados);
     EscreveCabecalhoIndice(indiceBIN, cabInd);
 
     fclose(dadosBIN);

@@ -46,13 +46,6 @@ int VerificaStatusDadosIndice(FILE *dadosBIN, FILE *indiceBIN){
     return 1;
 }
 
-void LePrimeiraLinha(FILE *csv){
-    char caractereLido;
-    do{
-        caractereLido = fgetc(csv);
-    } while(caractereLido != '\n');
-}
-
 char *readline(){
     char *palavra = NULL;
     char caractereLido = '\0';

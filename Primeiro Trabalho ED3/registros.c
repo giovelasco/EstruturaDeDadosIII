@@ -80,7 +80,7 @@ void ImprimeRegistro(registro regDados){
     (regDados.peso != -1) ? printf("%d\r\n", regDados.peso) : printf("NULO\r\n");
 }
 
-void EscreveRegistroCabecalho(FILE *bin, cabecalho regCab){
+void EscreveCabecalhoDados(FILE *bin, cabecalho regCab){
     fwrite(&(regCab.status), sizeof(char), 1, bin);
     fwrite(&(regCab.proxRRN), sizeof(int), 1, bin);
     fwrite(&(regCab.nroTecnologias), sizeof(int), 1, bin);

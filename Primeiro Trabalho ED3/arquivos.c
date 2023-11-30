@@ -20,7 +20,7 @@ void LePrimeiraLinha(FILE *csv){
     } while(caractereLido != '\n');
 }
 
-void EscreveRegistroCabecalho(FILE *bin, cabecalho regCab){
+void EscreveCabecalhoDados(FILE *bin, cabecalho regCab){
     fwrite(&(regCab.status), sizeof(char), 1, bin);
     fwrite(&(regCab.proxRRN), sizeof(int), 1, bin);
     fwrite(&(regCab.nroTecnologias), sizeof(int), 1, bin);

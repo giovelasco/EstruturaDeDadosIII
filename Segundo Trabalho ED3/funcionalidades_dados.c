@@ -16,7 +16,7 @@ void Funcionalidade1(char *nomeDadosCSV, char *nomeDadosBIN){
     // escreve cabeçalho no início do arquivo binário
     cabecalhoDados cabDados = (cabecalhoDados){.proxRRN = 0, .nroTecnologias = 0, .nroParesTecnologias = 0};
     cabDados.status = '0'; // arquivo binário aberto para escrita
-    EscreveRegistroCabecalho(bin, cabDados);
+    EscreveCabecalhoDados(bin, cabDados);
 
     lista_t *l = CriaLista();
     registroDados regDados;
@@ -26,7 +26,8 @@ void Funcionalidade1(char *nomeDadosCSV, char *nomeDadosBIN){
     char caractereLido;
     int tamCampo = 0, numVirgulas = 0;
 
-    LePrimeiraLinha(csv);
+    // realiza a leitura da primeira linha do arquivo .csv
+    do{caractereLido = fgetc(csv);} while(caractereLido != '\n');
     
     do{ 
         caractereLido = fgetc(csv);
@@ -89,7 +90,7 @@ void Funcionalidade1(char *nomeDadosCSV, char *nomeDadosBIN){
     // sobrescreve o cabeçalho do arquivo binário
     fseek(bin, 0, SEEK_SET);
     cabDados.status = '1'; // arquivo binário será fechado em seguida
-    EscreveRegistroCabecalho(bin, cabDados);
+    EscreveCabecalhoDados(bin, cabDados);
 
     // fecha os arquivos
     fclose(csv);

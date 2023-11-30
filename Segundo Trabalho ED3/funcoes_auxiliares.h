@@ -30,12 +30,6 @@ int VerificaStatus(FILE *bin);
 int VerificaStatusDadosIndice(FILE *dadosBIN, FILE *indiceBIN);
 
 /**
- * Realiza a leitura da primeira linha de um arquivo .csv.
- * @param csv ponteiro para um arquivo .csv
-*/
-void LePrimeiraLinha(FILE *csv);
-
-/**
  * Lê uma palavra digitada no terminal.
  * @returns retorna a palavra lida
 */
