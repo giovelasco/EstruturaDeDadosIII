@@ -23,13 +23,6 @@ FILE *AbrirArquivo(FILE *arquivo, char *nomeArquivo, char *modoAbertura);
 int VerificaStatus(FILE *bin);
 
 /**
- * Verifica a integridade de um arquivo de dados e de um arquivo de indices.
- * @param dadosBIN ponteiro para um arquivo de dados
- * @param indiceBIN ponteiro para um arquivo de indices
-*/
-int VerificaStatusDadosIndice(FILE *dadosBIN, FILE *indiceBIN);
-
-/**
  * Lê uma palavra digitada no terminal.
  * @returns retorna a palavra lida
 */

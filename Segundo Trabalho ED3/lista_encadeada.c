@@ -61,3 +61,34 @@ void InsereLista(lista_t *l, char *aInserir){
     l->fim = p;
     l->tam++;
 }
+
+void InsereArquivosLista(FILE *dadosBIN, lista_t *l, registroDados regDados){
+    fseek(dadosBIN, TAM_CABECALHO * sizeof(char), SEEK_SET);
+    while(fread(&(regDados.removido), sizeof(char), 1, dadosBIN) != 0){
+        if(regDados.removido == '1'){
+            fseek(dadosBIN, TAM_REGISTRO - 1, SEEK_CUR);
+        }
+        else{
+            fseek(dadosBIN, 12, SEEK_CUR);
+
+            fread(&(regDados.TecnologiaOrigem.tamanho), sizeof(int), 1, dadosBIN);
+            regDados.TecnologiaOrigem.nome = (char *) malloc((regDados.TecnologiaOrigem.tamanho + 1) * sizeof(char));
+            fread(regDados.TecnologiaOrigem.nome, sizeof(char), regDados.TecnologiaOrigem.tamanho, dadosBIN);
+            regDados.TecnologiaOrigem.nome[regDados.TecnologiaOrigem.tamanho] = '\0';
+
+            fread(&(regDados.TecnologiaDestino.tamanho), sizeof(int), 1, dadosBIN);
+            regDados.TecnologiaDestino.nome = (char *) malloc((regDados.TecnologiaDestino.tamanho + 1) * sizeof(char));
+            fread(regDados.TecnologiaDestino.nome, sizeof(char), regDados.TecnologiaDestino.tamanho, dadosBIN);
+            regDados.TecnologiaDestino.nome[regDados.TecnologiaDestino.tamanho] = '\0';
+
+            InsereLista(l, regDados.TecnologiaOrigem.nome);          
+            InsereLista(l, regDados.TecnologiaDestino.nome);
+
+            free(regDados.TecnologiaDestino.nome);
+            free(regDados.TecnologiaOrigem.nome); 
+
+            int tamLixo = TAM_REGISTRO - (regDados.TecnologiaOrigem.tamanho + regDados.TecnologiaDestino.tamanho) * (sizeof(char)) - TAM_REGISTRO_FIXO;
+            fseek(dadosBIN, tamLixo, SEEK_CUR);
+        }
+    }
+}

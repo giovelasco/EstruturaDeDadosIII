@@ -30,22 +30,6 @@ int VerificaStatus(FILE *bin){
     return 1;
 }
 
-int VerificaStatusDadosIndice(FILE *dadosBIN, FILE *indiceBIN){
-    char statusDados;
-    char statusIndice;
-    fread(&statusDados, sizeof(char), 1, dadosBIN);
-    fread(&statusIndice, sizeof(char), 1, indiceBIN);
-
-    if(statusDados == '0' || statusIndice == '0'){
-        printf("Falha no processamento do arquivo.");
-        fclose(dadosBIN);
-        fclose(indiceBIN);
-        return 0;
-    }
-
-    return 1;
-}
-
 char *readline(){
     char *palavra = NULL;
     char caractereLido = '\0';
