@@ -6,6 +6,7 @@ Nome: Giovanna de Freitas Velasco - NUSP: 13676346
 #include <stdio.h>
 #include <stdlib.h>
 #include "funcoes_auxiliares.h"
+#include "lista_encadeada.h"
 
 /**
  * Realiza a leitura de vários registros de um arquivo de entrada no formato csv

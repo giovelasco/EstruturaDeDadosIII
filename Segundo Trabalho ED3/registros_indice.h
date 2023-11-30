@@ -17,7 +17,6 @@ typedef struct{
     char lixo[197];
 } cabecalhoIndice;
 
-
 typedef struct{
     int nroChaveNo;
     int alturaNo;
@@ -29,19 +28,66 @@ typedef struct{
 } paginaIndice;
 
 
+typedef struct{
+    char chave[TAM_CAMPO_INDICES + 1];
+    int RRNdados;
+    int RRNnoDireita;
+} dados;
+
+/**
+ * Escreve o cabeçalho de um arquivo binário de índices
+ * @param bin nome do arquivo binário
+ * @param cabInd cabeçaho do arquivo de índices
+*/
 void EscreveCabecalhoIndice(FILE *bin, cabecalhoIndice cabInd);
 
+
+/**
+ * Realiza a leitura do cabeçalho de um arquivo de índices
+ * @param bin nome do arquivo binário
+ * @param cabInd ponteiro para um cabeçalho de índices
+*/
 void LeCabecalhoIndice(FILE *bin, cabecalhoIndice *cabInd);
 
+/**
+ * Cria uma nova página do arquivo de índices
+ * @param cabInd ponteiro para o cabeçalho do arquivo de índices
+*/
+paginaIndice CriaPagina(cabecalhoIndice *cabInd);
+
+/**
+ * Escreve uma página em um arquivo binário de índices
+ * @param bin nome do arquivo binário
+ * @param pagInd página do arquivo de índices
+*/
 void EscrevePaginaIndice(FILE *bin, paginaIndice pagInd);
 
+
+/**
+ * Realiza a leitura de uma página em um arquivo de índices
+ * @param bin nome do arquivo binário
+ * @param pagInd ponteiro para uma página do arquivo de índices
+*/
 void LePaginaIndice(FILE *bin, paginaIndice *pagInd);
+
 
 void ImprimePaginaIndice(paginaIndice pagInd);
 
 
 // colocar na descrição que apaga APENAS o P à direita!!!!
+/**
+ * Apaga a chave, o RRN e o ponteiro à direita do elemento de uma página
+ * @param pagInd ponteiro para uma página do arquivo de índices
+ * @param posição posição do elemento dentro da página
+*/
 void ApagaElementoPagina(paginaIndice *pagInd, int posicao);
 
-// colocar na descrição que copia APENAS o P à esquerda!!!!
+// colocar na descrição que copia APENAS o P à direita!!!!!!
+/**
+ * Copia a chave, o RRN e o ponteiro à direita do elemento de uma página para outra página
+ * @param pagIndDireita página para onde o elemento será copiado
+ * @param pagIndEsquerda página de origem do elemento a ser copiado
+ * @param posDireita posição na nova página onde o elemento será copiado
+ * @param posEsquerda posição na página de origem de onde o elemento será copiado
+*/
 void CopiaElementoPagina(paginaIndice *pagIndDireita, paginaIndice *pagIndEsquerda, int posDireita, int posEsquerda);

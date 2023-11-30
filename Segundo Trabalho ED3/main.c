@@ -57,7 +57,6 @@ int main(){
             free(nomeIndiceBIN);
             break;
         
-        
         // funcionalidade 6
         case 6:
             nomeDadosBIN = readline();
@@ -68,16 +67,16 @@ int main(){
             free(nomeIndiceBIN);
             break;
 
-        /*
+        
         // funcionalidade 7
         case 7:
             nomeDadosBIN = readline();
             nomeIndiceBIN = readline();
             scanf("%d", &n);
-            //Funcionalidade7(nomeDadosBIN, nomeIndiceBIN, n);
+            Funcionalidade7(nomeDadosBIN, nomeIndiceBIN, n);
             free(nomeDadosBIN);
             free(nomeIndiceBIN);
-            break;*/
+            break;
 
         default:
             break;

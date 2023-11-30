@@ -5,6 +5,7 @@ Nome: Giovanna de Freitas Velasco - NUSP: 13676346
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "registros_indice.h"
 
 void EscreveCabecalhoIndice(FILE *bin, cabecalhoIndice cabInd){
@@ -18,6 +19,30 @@ void LeCabecalhoIndice(FILE *bin, cabecalhoIndice *cabInd){
     fread(&(cabInd->status), sizeof(char), 1, bin);
     fread(&(cabInd->noRaiz), sizeof(int), 1, bin);
     fread(&(cabInd->RRNproxNo), sizeof(int), 1, bin);
+}
+
+paginaIndice CriaPagina(cabecalhoIndice *cabInd){
+    // inicia as variáveis da página como nulas de acordo com a especificação do trabalho
+    paginaIndice novaPagInd;
+    novaPagInd.nroChaveNo = 0;
+    novaPagInd.alturaNo = 1; 
+    novaPagInd.RRNdoNo = cabInd->RRNproxNo;
+
+    for(int i = 0; i < 3; i++){
+        novaPagInd.P[i] = -1;
+
+        for(int j = 0; j < TAM_CAMPO_INDICES; j++)
+            novaPagInd.C[i][j] = CHAR_LIXO;
+            
+        novaPagInd.C[i][TAM_CAMPO_INDICES] = '\0';
+        novaPagInd.PR[i] = -1;
+    }
+    novaPagInd.P[3] = -1;
+
+    // atualiza o valor do próximo RRN a ser criado no cabeçalho do arquivo
+    cabInd->RRNproxNo++;
+
+    return novaPagInd;
 }
 
 void EscrevePaginaIndice(FILE *bin, paginaIndice pagInd){
@@ -75,7 +100,9 @@ void ApagaElementoPagina(paginaIndice *pagInd, int posicao){
 }
 
 void CopiaElementoPagina(paginaIndice *pagIndDireita, paginaIndice *pagIndEsquerda, int posDireita, int posEsquerda){
-    pagIndDireita->P[posDireita] = pagIndEsquerda->P[posEsquerda];
+    pagIndDireita->P[posDireita + 1] = pagIndEsquerda->P[posEsquerda + 1];
     strcpy(pagIndDireita->C[posDireita], pagIndEsquerda->C[posEsquerda]);
     pagIndDireita->PR[posDireita] = pagIndEsquerda->PR[posEsquerda];
+
+    pagIndDireita->nroChaveNo++; // aumenta o número de chaves no nó
 }

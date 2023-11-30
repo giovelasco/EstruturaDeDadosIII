@@ -72,7 +72,7 @@ char *readline(){
         palavra[tam - 1] = caractereLido;
         caractereLido = getchar();
 
-    } while(caractereLido !=  '\r' && caractereLido != '\n' && caractereLido != ' ' && caractereLido != EOF);
+    } while(caractereLido !=  '\r' &&  caractereLido != ',' && caractereLido != '\n' && caractereLido != ' ' && caractereLido != EOF);
 
     // acrescenta o caractere de string '\0'
     tam += 1;

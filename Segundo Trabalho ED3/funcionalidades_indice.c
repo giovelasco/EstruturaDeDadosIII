@@ -13,7 +13,10 @@ void Funcionalidade5(char *nomeDadosBIN, char *nomeIndiceBIN){
     FILE *dadosBIN, *indiceBIN;
     dadosBIN = AbrirArquivo(dadosBIN, nomeDadosBIN, "rb");
     indiceBIN = AbrirArquivo(indiceBIN, nomeIndiceBIN, "wb+");
-    if(dadosBIN == NULL || indiceBIN == NULL) return;
+    if(dadosBIN == NULL){
+        fclose(indiceBIN);
+        return;
+    } 
 
     // escreve cabeçalho no início do arquivo de índices
     cabecalhoIndice cabInd = (cabecalhoIndice){.noRaiz = -1, .RRNproxNo = 0};
@@ -21,8 +24,9 @@ void Funcionalidade5(char *nomeDadosBIN, char *nomeIndiceBIN){
     for(int i = 0; i < 196; i++){
         cabInd.lixo[i] = CHAR_LIXO;
     }
+    cabInd.lixo[196] = '\0'; 
 
-    cabInd.status = '0'; //arquivo binário aberto para escrita
+    cabInd.status = '0'; // arquivo binário aberto para escrita
     EscreveCabecalhoIndice(indiceBIN, cabInd);
 
     // lê o cabeçalho do arquivo binário de dados
@@ -40,9 +44,9 @@ void Funcionalidade5(char *nomeDadosBIN, char *nomeIndiceBIN){
     // inicia leitura dos registros, colocando o numero do primeiro registro como zero
     registroDados regDados;
     int RRNdados = 0;
-    for(int mp = 0; mp < 3; mp++){
-        // lê o primeiro registro de dados do arquivo binário
-        fread(&(regDados.removido), sizeof(char), 1, dadosBIN);
+    int alturaArvore = 0;
+    while(fread(&(regDados.removido), sizeof(char), 1, dadosBIN) != 0){
+        //fread(&(regDados.removido), sizeof(char), 1, dadosBIN);
 
         if(regDados.removido == '1'){ // se o registro foi removido, pula para o próximo registro
             fseek(dadosBIN, TAM_REGISTRO - 1, SEEK_CUR);
@@ -50,12 +54,14 @@ void Funcionalidade5(char *nomeDadosBIN, char *nomeIndiceBIN){
         else{
             LeRegistroDados(dadosBIN, &regDados);
 
-            // cria a chave de busca a partir de NomeTecnologiaOrigem e NomeTecnologiaDestino
-            char chaveDeBusca[56];
-            strcpy(chaveDeBusca, regDados.TecnologiaOrigem.nome);
-            strcat(chaveDeBusca, regDados.TecnologiaDestino.nome);
+            if(strcmp(regDados.TecnologiaDestino.nome, "\0") != 0){
+                // cria a chave de busca a partir de NomeTecnologiaOrigem e NomeTecnologiaDestino
+                char chaveDeBusca[56];
+                strcpy(chaveDeBusca, regDados.TecnologiaOrigem.nome);
+                strcat(chaveDeBusca, regDados.TecnologiaDestino.nome);
 
-            InsereArvoreB(indiceBIN, &cabInd, chaveDeBusca, RRNdados);
+                InsercaoArvoreB(indiceBIN, &cabInd, chaveDeBusca, RRNdados, &alturaArvore);
+            }
 
             free(regDados.TecnologiaOrigem.nome);
             free(regDados.TecnologiaDestino.nome);
@@ -65,27 +71,15 @@ void Funcionalidade5(char *nomeDadosBIN, char *nomeIndiceBIN){
 
         RRNdados++;
     }
- 
     
+    fseek(indiceBIN, 0, SEEK_SET);
+    cabInd.status = '1'; // tudo finalizado, manda pro abraço
+    fwrite(&(cabInd.status), sizeof(char), 1, indiceBIN);
 
-    // cria o primeiro nó no arquivo de indices
-    
-    // a busca começa pelo nó raiz
-    // no raiz é nulo inicialmente -> cria um novo nó
-    // nó 0 criado
-    // inserir primeiro elemento na arvore
-    // tem espaço no nó
-    // insere os dados referentes ao primeiro elemento na primeira posição do nó de rrn 0
+    fclose(dadosBIN);
+    fclose(indiceBIN);
 
-    // codar uma busca binária
-    // split 2-1
-    // codar a criação de um novo nó
-    // distribuição uniforme das chaves
-    // atualizar o rrn 
-    // o numero de nós é igual ao numero de pares de tecnologia - é garantido que não tem repeticao
-    // registros logicamente removidos são contabilizados no nroParesTecnologias?
-    
-
+    binarioNaTela(nomeIndiceBIN);
 }
 
 void BuscaArquivoDadosCriterio(FILE *dadosBIN, char *nomeCampo){ // funcionalidade 3
@@ -236,4 +230,142 @@ void Funcionalidade6(char *nomeDadosBIN, char *nomeIndiceBIN, int n){
 }
 
 
-//void Funcionalidade7(char *nomeDadosBIN, char *nomeIndiceBIN, int n){}
+void Funcionalidade7(char *nomeDadosBIN, char *nomeIndiceBIN, int n){
+    // abre os arquivos
+    FILE *dadosBIN, *indiceBIN;
+    dadosBIN = AbrirArquivo(dadosBIN, nomeDadosBIN, "rb+");
+    indiceBIN = AbrirArquivo(indiceBIN, nomeIndiceBIN, "rb+");
+    if(dadosBIN == NULL || indiceBIN == NULL) return;
+    
+    // faz a leitura do cabeçalho do arquivo de dados
+    cabecalhoDados cabDados;
+    LeCabecalhoDados(dadosBIN, &cabDados);
+
+    // faz a leitura do cabeçalho do arquivo de índices
+    cabecalhoIndice cabInd;
+    for(int i = 0; i < 196; i++){
+        cabInd.lixo[i] = CHAR_LIXO;
+    }
+    cabInd.lixo[196] = '\0'; 
+    LeCabecalhoIndice(indiceBIN, &cabInd);
+
+    // verifica a consistência dos arquivos
+    if(cabDados.status == '0' || cabInd.status == '0'){
+        printf("Falha no processamento do arquivo.\n");
+        fclose(dadosBIN);
+        fclose(indiceBIN);
+        return;
+    }
+
+    // atualiza o status para escrita nos arquivos
+    cabDados.status = '0';
+    cabInd.status = '0';
+
+    lista_t *l = CriaLista();
+    registroDados regDados;
+    int alturaArvore;
+    char *grupo;
+    char *popularidade;
+    char *peso;
+
+    while(fread(&(regDados.removido), sizeof(char), 1, dadosBIN) != 0){
+        if(regDados.removido == '1'){
+            fseek(dadosBIN, TAM_REGISTRO - 1, SEEK_CUR);
+        }
+        else{
+            fseek(dadosBIN, 12, SEEK_CUR);
+
+            fread(&(regDados.TecnologiaOrigem.tamanho), sizeof(int), 1, dadosBIN);
+            if(regDados.TecnologiaOrigem.tamanho != 0){
+                regDados.TecnologiaOrigem.nome = (char *) malloc((regDados.TecnologiaOrigem.tamanho + 1) * sizeof(char));
+                fread(regDados.TecnologiaOrigem.nome, sizeof(char), regDados.TecnologiaOrigem.tamanho, dadosBIN);
+                regDados.TecnologiaOrigem.nome[regDados.TecnologiaOrigem.tamanho] = '\0';
+
+                InsereLista(l, regDados.TecnologiaOrigem.nome);
+                free(regDados.TecnologiaOrigem.nome);
+            }
+
+            fread(&(regDados.TecnologiaDestino.tamanho), sizeof(int), 1, dadosBIN);
+            if(regDados.TecnologiaDestino.tamanho != 0){
+                regDados.TecnologiaDestino.nome = (char *) malloc((regDados.TecnologiaDestino.tamanho + 1) * sizeof(char));
+                fread(regDados.TecnologiaDestino.nome, sizeof(char), regDados.TecnologiaDestino.tamanho, dadosBIN);
+                regDados.TecnologiaDestino.nome[regDados.TecnologiaDestino.tamanho] = '\0';
+
+                InsereLista(l, regDados.TecnologiaDestino.nome);
+                free(regDados.TecnologiaDestino.nome);
+            }
+
+            int tamLixo = TAM_REGISTRO - (regDados.TecnologiaOrigem.tamanho + regDados.TecnologiaDestino.tamanho) * (sizeof(char)) - TAM_REGISTRO_FIXO;
+            fseek(dadosBIN, tamLixo, SEEK_CUR);
+        }
+    }
+
+    // pula para a alturaNo no nó raiz do arquivo de índices árvore-B
+    fseek(indiceBIN, sizeof(int) + (cabInd.noRaiz + 1) * TAM_REGISTRO_INDICES, SEEK_SET);
+    fread(&(alturaArvore), sizeof(int), 1, indiceBIN);
+
+    // inicia a leitura dos campos a serem adicionados
+    for(int i = 0; i < n; i++){
+        regDados.removido = '0';
+        regDados.TecnologiaOrigem.nome = readline();
+        grupo = readline();
+        popularidade = readline();
+        regDados.TecnologiaDestino.nome = readline();
+        peso = readline();
+
+        regDados.grupo = (strcmp(grupo, "NULO") == 0) ? -1 : (int) strtol(grupo, NULL, 10);
+        regDados.popularidade = (strcmp(popularidade, "NULO") == 0) ? -1 : (int) strtol(popularidade, NULL, 10);
+        regDados.peso = (strcmp(peso, "NULO") == 0) ? -1 : (int) strtol(peso, NULL, 10);
+
+        InsereLista(l, regDados.TecnologiaOrigem.nome); // insere nomeTecnologiaOrigem na lista de contagem de tecnologias
+
+        // verifica se o nomeTecnologiaDestino é nulo
+        if(strcmp(regDados.TecnologiaDestino.nome, "NULO") == 0){
+            strcpy(regDados.TecnologiaDestino.nome, "\0");
+            cabDados.nroParesTecnologias--; // anula a inserção do par ao final do procedimento
+        } 
+        else{ // caso o nomeTecnologiaDestino não seja nulo, é inserido na lista de contagem de tecnologias
+            InsereLista(l, regDados.TecnologiaDestino.nome); 
+
+            char chaveDeBusca[56];
+            strcpy(chaveDeBusca, regDados.TecnologiaOrigem.nome);
+            strcat(chaveDeBusca, regDados.TecnologiaDestino.nome);
+
+            InsercaoArvoreB(indiceBIN, &cabInd, chaveDeBusca, cabDados.proxRRN, &alturaArvore);
+        }
+
+        regDados.TecnologiaOrigem.tamanho = strlen(regDados.TecnologiaOrigem.nome);
+        regDados.TecnologiaDestino.tamanho = strlen(regDados.TecnologiaDestino.nome);
+
+        // escreve o registro no final do arquivo de dados
+        fseek(dadosBIN, 0, SEEK_END);
+        EscreveRegistroDados(dadosBIN, regDados);
+
+        // atualiza informações do cabeçalho do arquivo de dados
+        cabDados.proxRRN++;
+        cabDados.nroParesTecnologias++;
+
+        free(grupo);
+        free(popularidade);
+        free(peso);
+    }
+
+    cabDados.nroTecnologias = l->tam;
+    DestroiLista(l);
+    free(l);
+
+    fseek(dadosBIN, 0, SEEK_SET);
+    fseek(indiceBIN, 0, SEEK_SET);
+    
+    cabDados.status = '1';
+    cabInd.status = '1';
+
+    EscreveRegistroCabecalho(dadosBIN, cabDados);
+    EscreveCabecalhoIndice(indiceBIN, cabInd);
+
+    fclose(dadosBIN);
+    fclose(indiceBIN);
+
+    binarioNaTela(nomeDadosBIN);
+    binarioNaTela(nomeIndiceBIN);
+}

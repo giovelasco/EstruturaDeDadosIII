@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "funcionalidades_dados.h"
-#include "lista_encadeada.h"
 
 void Funcionalidade1(char *nomeDadosCSV, char *nomeDadosBIN){ 
     // abre os arquivos

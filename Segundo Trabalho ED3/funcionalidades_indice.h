@@ -30,4 +30,4 @@ void Funcionalidade6(char *nomeDadosBIN, char *nomeIndiceBIN, int n);
  * @param nomeIndiceBIN nome do arquivo de índice árvore-B .bin
  * @param n número de elementos a serem inseridos
 */
-//void Funcionalidade7(char *nomeDadosBIN, char *nomeIndiceBIN, int n);
+void Funcionalidade7(char *nomeDadosBIN, char *nomeIndiceBIN, int n);

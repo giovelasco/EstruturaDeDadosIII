@@ -10,4 +10,4 @@ Nome: Giovanna de Freitas Velasco - NUSP: 13676346
 
 int BuscaArvoreB(FILE *indiceBIN, char *chaveDeBusca);
 
-void InsereArvoreB(FILE *indiceBIN, cabecalhoIndice *cabInd, char *chaveDeBusca, int RRNdados);
+void InsercaoArvoreB(FILE *indiceBIN, cabecalhoIndice *cabInd, char *chaveDeBusca, int RRNdados, int *alturaArvore);
