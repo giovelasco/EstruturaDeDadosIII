@@ -81,95 +81,6 @@ void Funcionalidade5(char *nomeDadosBIN, char *nomeIndiceBIN){
     binarioNaTela(nomeIndiceBIN);
 }
 
-void BuscaArquivoDadosCriterio(FILE *dadosBIN, char *nomeCampo){ // funcionalidade 3
-    registroDados regDados;
-
-    fseek(dadosBIN, 13, SEEK_SET); // pula o cabeçalho do arquivo
-    int numRegistrosLidos = 0;
-
-    // analisa para cada campo possível
-    if(strcmp(nomeCampo, "grupo") == 0){
-        int grupo;
-        scanf("%d", &grupo); 
-
-        // verifica cada registro até o fim do arquivo
-        while(fread(&(regDados.removido), sizeof(char), 1, dadosBIN) != 0)
-            numRegistrosLidos += ComparaCampoInteiro(dadosBIN, &regDados, 4, grupo);                  
-    }
-
-    // realiza a comparação do nome digitado com "popularidade"
-    else if(strcmp(nomeCampo, "popularidade") == 0){
-        int popularidade;
-        scanf("%d", &popularidade); // lê a popularidade buscada
-        
-        // enquanto o registro lido não estiver removido, realiza a leitura e salva quantos registros sofram lidos.
-        while(fread(&(regDados.removido), sizeof(char), 1, dadosBIN) != 0)
-            numRegistrosLidos += ComparaCampoInteiro(dadosBIN, &regDados, 8, popularidade);                  
-    }
-    
-    else if(strcmp(nomeCampo, "peso") == 0){
-        int peso;
-        scanf("%d", &peso);
-
-        while(fread(&(regDados.removido), sizeof(char), 1, dadosBIN) != 0)
-            numRegistrosLidos += ComparaCampoInteiro(dadosBIN, &regDados, 12, peso);                  
-    }
-    
-    else if(strcmp(nomeCampo, "nomeTecnologiaOrigem") == 0){ 
-        char *tecOrigem;
-        tecOrigem = readlineAspas();
-
-        while(fread(&(regDados.removido), sizeof(char), 1, dadosBIN) != 0)
-            numRegistrosLidos += ComparaCampoString(dadosBIN, &regDados, 1, tecOrigem); 
-
-        free(tecOrigem);    
-    }
-
-    else if(strcmp(nomeCampo, "nomeTecnologiaDestino") == 0){
-        char *tecDestino;
-        tecDestino = readlineAspas();
-
-        while(fread(&(regDados.removido), sizeof(char), 1, dadosBIN) != 0)
-            numRegistrosLidos += ComparaCampoString(dadosBIN, &regDados, 2, tecDestino);
-
-        free(tecDestino);
-    }
-
-    // caso nenhum registro tenha sido lido
-    if(numRegistrosLidos == 0)
-        printf("Registro inexistente.\n");
-}
-
-void BuscaArquivoDadosRRN(FILE *dadosBIN, int RRN){ // funcionalidade 4
-    // calcula posição do byteoffset
-    int byteoffset = CalculaByteOffset(RRN);
-
-    // imprime registro do byteoffset desejado
-    registroDados regDados;
-    
-    fseek(dadosBIN, byteoffset, SEEK_SET);
-
-    int verifica = 0;
-    
-    verifica = fread(&(regDados.removido), sizeof(char), 1, dadosBIN);
-    if(verifica == 0){
-        printf("Registro inexistente.\n");
-        fclose(dadosBIN);
-        return;
-    }
-
-    if(regDados.removido == '1'){
-        printf("Registro inexistente.\n");
-        fclose(dadosBIN);
-        return;
-    }
-
-    LeRegistroDados(dadosBIN, &regDados);
-    ImprimeRegistro(regDados);
-    free(regDados.TecnologiaOrigem.nome);
-    free(regDados.TecnologiaDestino.nome);
-}
-
 void Funcionalidade6(char *nomeDadosBIN, char *nomeIndiceBIN, int n){
     // abre os arquivos
     FILE *dadosBIN, *indiceBIN;
@@ -180,24 +91,22 @@ void Funcionalidade6(char *nomeDadosBIN, char *nomeIndiceBIN, int n){
     cabecalhoIndice cabInd;
     LeCabecalhoIndice(indiceBIN, &cabInd);
 
-    // verifica se o arquivo de indice está consistente
-    if(cabInd.status == '0'){
+    char statusDados;
+    fread(&statusDados, sizeof(char), 1, dadosBIN);
+    // verifica a consistência dos arquivos
+    if(cabInd.status == '0' || statusDados == '0'){
         printf("Falha no processamento do arquivo.\n");
         fclose(dadosBIN);
         fclose(indiceBIN);
         return;
     }
-
-    // verifica o status do arquivo de dados
-    if(VerificaStatus(dadosBIN) == 0)
-        return;
         
-    // realiza a busca
+    // realiza a busca n vezes
     for(int i = 0; i < n; i++){
         char *nomeCampo;
         nomeCampo = readline(); // lê o nome do campo desejado
 
-        if(strcmp(nomeCampo, "nomeTecnologiaOrigemDestino") == 0){
+        if(strcmp(nomeCampo, "nomeTecnologiaOrigemDestino") == 0){ // utiliza o arquivo de índices árvore-B para realizar a busca
             char *tecOrigemDestino;
             tecOrigemDestino = readlineAspas();
 
@@ -205,18 +114,18 @@ void Funcionalidade6(char *nomeDadosBIN, char *nomeIndiceBIN, int n){
             fseek(indiceBIN, (cabInd.noRaiz + 1) * TAM_REGISTRO_INDICES, SEEK_SET);
             
             // realizada busca na árvore
-            int buscaBinaria = BuscaArvoreB(indiceBIN, tecOrigemDestino);
+            int resultadoBusca = BuscaArvoreB(indiceBIN, tecOrigemDestino);
 
             // redireciona o valor encontrado pela busca para cada caso
-            if(buscaBinaria == -1)
+            if(resultadoBusca == -1)
                 printf("Registro inexistente.\n");
             else
-                Funcionalidade4(nomeDadosBIN, buscaBinaria);
+                Funcionalidade4(nomeDadosBIN, resultadoBusca);
 
             // libera memória alocada
             free(tecOrigemDestino);
         }
-        else{
+        else{ // utiliza a estrutura da funcionalidade 3 para realizar a busca
             BuscaArquivoDadosCriterio(dadosBIN, nomeCampo);
         }
 
@@ -227,7 +136,6 @@ void Funcionalidade6(char *nomeDadosBIN, char *nomeIndiceBIN, int n){
     fclose(dadosBIN);
     fclose(indiceBIN);
 }
-
 
 void Funcionalidade7(char *nomeDadosBIN, char *nomeIndiceBIN, int n){
     // abre os arquivos
@@ -258,7 +166,7 @@ void Funcionalidade7(char *nomeDadosBIN, char *nomeIndiceBIN, int n){
     cabDados.status = '0';
     cabInd.status = '0';
 
-    lista_t *l = CriaLista(); // instanciada para realizar contagem de tecnologias
+    lista_t *l = CriaLista(); // instanciada para realizar a contagem de tecnologias
     registroDados regDados;
 
     // insere todas as tecnologias na lista, tratando nulos e repetições
@@ -275,12 +183,15 @@ void Funcionalidade7(char *nomeDadosBIN, char *nomeIndiceBIN, int n){
     // inicia a leitura dos campos a serem adicionados
     for(int i = 0; i < n; i++){
         regDados.removido = '0';
+
+        // lê os registros a serem adicionados no arquivo
         regDados.TecnologiaOrigem.nome = readline();
         grupo = readline();
         popularidade = readline();
         regDados.TecnologiaDestino.nome = readline();
         peso = readline();
 
+        // trata os casos em que os campos inteiros são nulos
         regDados.grupo = (strcmp(grupo, "NULO") == 0) ? -1 : (int) strtol(grupo, NULL, 10);
         regDados.popularidade = (strcmp(popularidade, "NULO") == 0) ? -1 : (int) strtol(popularidade, NULL, 10);
         regDados.peso = (strcmp(peso, "NULO") == 0) ? -1 : (int) strtol(peso, NULL, 10);
@@ -292,7 +203,7 @@ void Funcionalidade7(char *nomeDadosBIN, char *nomeIndiceBIN, int n){
             strcpy(regDados.TecnologiaDestino.nome, "\0");
             cabDados.nroParesTecnologias--; // anula a inserção do par ao final do procedimento
         } 
-        else{ // caso o nomeTecnologiaDestino não seja nulo, é inserido na lista de contagem de tecnologias e a chave é inserida na árvore
+        else{ // caso o nomeTecnologiaDestino não seja nulo, ele é inserido na lista de contagem de tecnologias e a chave é inserida na árvore
             InsereLista(l, regDados.TecnologiaDestino.nome); 
 
             char chaveDeBusca[56];

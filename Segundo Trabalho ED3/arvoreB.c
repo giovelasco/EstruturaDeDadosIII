@@ -66,6 +66,8 @@ int BuscaArvoreB(FILE *indiceBIN, char *chaveDeBusca){
     BuscaRecursivaArvoreB(indiceBIN, &pagInd, chaveDeBusca, tamChave, &indexNoFilho);
 }
 
+
+
 void InsereChaveNo(paginaIndice *pagInd, dados chaveAInserir, int indexNoFilho){
     // desloca as chaves dentro da página
     for(int i = pagInd->nroChaveNo; i > indexNoFilho; i--){
@@ -152,68 +154,6 @@ void Split(cabecalhoIndice *cabInd, paginaIndice *pagEsquerda, paginaIndice *pag
         }
     }
 }
-
-/*
-void Split(cabecalhoIndice *cabInd, paginaIndice *pagEsquerda, paginaIndice *pagDireita, dados *chaveAInserir, dados *PromoKey, int indexNoFilho){
-        FODA-SE VOCE SPLIT DE MERDA DO CARALHO CAPETAO DO INFERNO INFERNO INFERNOO INFERONO ONOFNEONFAÇEGNÇKJASNGDKJNASDK CU CU CU CU
-    
-    int ponteiroEsquerda;
-    dados paginaTemporaria[NUM_CHAVES_PAGINA + 1]; // possui todos os outros ponteiros da direita
-    int indexChaveMeio = (NUM_CHAVES_PAGINA + 1) / 2;
-
-    ponteiroEsquerda = pagEsquerda->P[0];
-    for(int i = 0; i < NUM_CHAVES_PAGINA; i++){
-        strcpy(paginaTemporaria[i].chave, pagEsquerda->C[i]);
-        paginaTemporaria[i].RRNdados = pagEsquerda->PR[i];
-        paginaTemporaria[i].RRNnoDireita = pagEsquerda->P[i + 1];
-    }
-
-    // inserção na paginaTemporaria
-    // desloca as chaves dentro da página
-    for(int i = NUM_CHAVES_PAGINA; i > indexNoFilho; i--){
-        strcpy(paginaTemporaria[i].chave, paginaTemporaria[i - 1].chave);
-        paginaTemporaria[i].RRNdados = paginaTemporaria[i - 1].RRNdados;
-        paginaTemporaria[i].RRNnoDireita = paginaTemporaria[i - 1].RRNnoDireita;
-    }
-
-    // insere a chave de busca no lugar apropriado da página temporária
-    strcpy(paginaTemporaria[indexNoFilho].chave, chaveAInserir->chave);
-    paginaTemporaria[indexNoFilho].RRNdados = chaveAInserir->RRNdados;
-    paginaTemporaria[indexNoFilho].RRNnoDireita = chaveAInserir->RRNnoDireita;
-    for(int i = strlen(chaveAInserir->chave); i < TAM_CAMPO_INDICES; i++)
-        paginaTemporaria[indexNoFilho].chave[i] = CHAR_LIXO;
-
-    *pagDireita = CriaPagina(cabInd); // aloca uma nova pagina para a árvore-B
-
-    // atualiza os dados da chave de promoção
-    strcpy(PromoKey->chave, paginaTemporaria[indexChaveMeio].chave);
-    PromoKey->RRNdados = paginaTemporaria[indexChaveMeio].RRNdados;
-    PromoKey->RRNnoDireita = pagDireita->RRNdoNo;
-
-    for(int i = 0; i < NUM_CHAVES_PAGINA; i++){
-        ApagaElementoPagina(pagEsquerda, i);
-    }
-
-    pagEsquerda->P[0] = ponteiroEsquerda;
-    for(int i = 0; i < indexChaveMeio; i++){
-        strcpy(pagEsquerda->C[i], paginaTemporaria[i].chave);
-        pagEsquerda->PR[i] = paginaTemporaria[i].RRNdados;
-        pagEsquerda->P[i + 1] = paginaTemporaria[i].RRNnoDireita;
-
-        pagEsquerda->nroChaveNo++; // aumenta o número de chaves no nó
-    }
-
-    pagDireita->P[0] = paginaTemporaria[indexChaveMeio].RRNnoDireita;
-    for(int i = indexChaveMeio + 1; i < (NUM_CHAVES_PAGINA + 1); i++){
-        strcpy(pagDireita->C[i - (indexChaveMeio + 1)], paginaTemporaria[i].chave);
-        pagDireita->PR[i - (indexChaveMeio + 1)] = paginaTemporaria[i].RRNdados;
-        pagDireita->P[i - indexChaveMeio] = paginaTemporaria[i].RRNnoDireita;
-
-        pagDireita->nroChaveNo++; // aumenta o número de chaves no nó
-    }
-}
-*/
-
 
 int InsercaoRecursivaArvoreB(FILE *indiceBIN, cabecalhoIndice *cabInd, int RRNatual, dados *chaveBusca, dados *PromoKey){
     int indexNoFilho;

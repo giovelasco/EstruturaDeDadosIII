@@ -63,14 +63,18 @@ void InsereLista(lista_t *l, char *aInserir){
 }
 
 void InsereArquivosLista(FILE *dadosBIN, lista_t *l, registroDados regDados){
+    // coloca o ponteiro do arquivo no primeiro registro de dados
     fseek(dadosBIN, TAM_CABECALHO * sizeof(char), SEEK_SET);
-    while(fread(&(regDados.removido), sizeof(char), 1, dadosBIN) != 0){
-        if(regDados.removido == '1'){
+
+    // enquanto ainda é possível ler o arquivo
+    while(fread(&(regDados.removido), sizeof(char), 1, dadosBIN) != 0){ 
+        if(regDados.removido == '1'){ // pula o registro logicamente removido
             fseek(dadosBIN, TAM_REGISTRO - 1, SEEK_CUR);
         }
         else{
             fseek(dadosBIN, 12, SEEK_CUR);
 
+            // realiza a leitura dos campos relacionados às tecnologias
             fread(&(regDados.TecnologiaOrigem.tamanho), sizeof(int), 1, dadosBIN);
             regDados.TecnologiaOrigem.nome = (char *) malloc((regDados.TecnologiaOrigem.tamanho + 1) * sizeof(char));
             fread(regDados.TecnologiaOrigem.nome, sizeof(char), regDados.TecnologiaOrigem.tamanho, dadosBIN);
@@ -81,12 +85,14 @@ void InsereArquivosLista(FILE *dadosBIN, lista_t *l, registroDados regDados){
             fread(regDados.TecnologiaDestino.nome, sizeof(char), regDados.TecnologiaDestino.tamanho, dadosBIN);
             regDados.TecnologiaDestino.nome[regDados.TecnologiaDestino.tamanho] = '\0';
 
+            // insere os dados na lista de tecnologias para realizar a contagem
             InsereLista(l, regDados.TecnologiaOrigem.nome);          
             InsereLista(l, regDados.TecnologiaDestino.nome);
 
             free(regDados.TecnologiaDestino.nome);
             free(regDados.TecnologiaOrigem.nome); 
 
+            // pula os bytes de lixo restantes no registro
             int tamLixo = TAM_REGISTRO - (regDados.TecnologiaOrigem.tamanho + regDados.TecnologiaDestino.tamanho) * (sizeof(char)) - TAM_REGISTRO_FIXO;
             fseek(dadosBIN, tamLixo, SEEK_CUR);
         }
