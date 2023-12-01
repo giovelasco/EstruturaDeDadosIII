@@ -72,7 +72,6 @@ void ImprimeRegistro(registroDados regDados){
     (regDados.peso != -1) ? printf("%d\r\n", regDados.peso) : printf("NULO\r\n");
 }
 
-
 int LeInteiro(char *campo){
     if(campo[0] == '\0')
         return -1;

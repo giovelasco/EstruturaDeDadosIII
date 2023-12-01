@@ -30,10 +30,7 @@ paginaIndice CriaPagina(cabecalhoIndice *cabInd){
 
     for(int i = 0; i < 3; i++){
         novaPagInd.P[i] = -1;
-
-        for(int j = 0; j < TAM_CAMPO_INDICES; j++)
-            novaPagInd.C[i][j] = CHAR_LIXO;
-            
+        memset(novaPagInd.C[i], CHAR_LIXO, TAM_CAMPO_INDICES); // preenche o campo com o caractere lixo
         novaPagInd.C[i][TAM_CAMPO_INDICES] = '\0';
         novaPagInd.PR[i] = -1;
     }
@@ -89,8 +86,7 @@ void ImprimePaginaIndice(paginaIndice pagInd){
 }
 
 void ApagaElementoPagina(paginaIndice *pagInd, int posicao){
-    for(int j = 0; j < TAM_CAMPO_INDICES; j++)
-        pagInd->C[posicao][j] = CHAR_LIXO;
+    memset(pagInd->C[posicao], CHAR_LIXO, TAM_CAMPO_INDICES);
     pagInd->C[posicao][TAM_CAMPO_INDICES] = '\0';
 
     pagInd->PR[posicao] = -1;
@@ -105,4 +101,10 @@ void CopiaElementoPagina(paginaIndice *pagIndDireita, paginaIndice *pagIndEsquer
     pagIndDireita->PR[posDireita] = pagIndEsquerda->PR[posEsquerda];
 
     pagIndDireita->nroChaveNo++; // aumenta o número de chaves no nó
+}
+
+void AtualizaElemento(elemento *elementoAAtualizar, char *chave, int RRNdados, int RRNnoDireita){
+    strcpy(elementoAAtualizar->chave, chave);
+    elementoAAtualizar->RRNdados = RRNdados;
+    elementoAAtualizar->RRNnoDireita = RRNnoDireita;
 }

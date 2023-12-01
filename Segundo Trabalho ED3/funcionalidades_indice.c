@@ -52,11 +52,11 @@ void Funcionalidade5(char *nomeDadosBIN, char *nomeIndiceBIN){
             // verifica se o campo nomeTecnologiaDestino não é nulo
             if(strcmp(regDados.TecnologiaDestino.nome, "\0") != 0){
                 // cria a chave de busca a partir de NomeTecnologiaOrigem e NomeTecnologiaDestino
-                char chaveDeBusca[56];
-                strcpy(chaveDeBusca, regDados.TecnologiaOrigem.nome);
-                strcat(chaveDeBusca, regDados.TecnologiaDestino.nome);
+                char chaveAInserir[56];
+                strcpy(chaveAInserir, regDados.TecnologiaOrigem.nome);
+                strcat(chaveAInserir, regDados.TecnologiaDestino.nome);
 
-                InsercaoArvoreB(indiceBIN, &cabInd, chaveDeBusca, RRNregDados, &alturaArvore);
+                InsercaoArvoreB(indiceBIN, &cabInd, chaveAInserir, RRNregDados, &alturaArvore);
             }
 
             free(regDados.TecnologiaOrigem.nome);
