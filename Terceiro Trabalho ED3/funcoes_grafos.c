@@ -7,58 +7,66 @@ Nome: Giovanna de Freitas Velasco - NUSP: 13676346
 #include <stdlib.h>
 #include <string.h>
 #include "funcoes_grafos.h"
-/*
-int BuscaBinariaPagina(paginaIndice *pagInd, int inicio, int fim, char *chaveDeBusca, int tamChave, int *posDescida){
-    // caso o início seja maior que o fim, a busca não encontrou o elemento e retorna -1
-    if(inicio > fim){ // fim da recursão
-        *posDescida = inicio;
-        return -1;
-    }
-    else{
-        // compara a chave busca com a chave do meio da página atual
-        int meio = (inicio + fim) / 2;
-        int valorRetorno = strncmp(chaveDeBusca, pagInd->C[meio], tamChave); 
-        
-        // caso o valor seja encontrado, retorna o RRN para o registro de dados
-        if(valorRetorno == 0)
-            return pagInd->PR[meio];
-        
-        // se o valor não foi encontrado, chama a função de busca binária recursivamente
-        else{
-            if(valorRetorno < 0)
-                return BuscaBinariaPagina(pagInd, inicio, meio - 1, chaveDeBusca, tamChave, posDescida);
-            else
-                return BuscaBinariaPagina(pagInd, meio + 1, fim, chaveDeBusca, tamChave, posDescida);
-        }
-    }
-}
-*/
-
 
 // é empregado um algoritmo de busca binária no vetor de vértices
-int BuscaBinaria(noVertices *listaAdjacencias, int inicio, int fim, char *nomeBuscado){
+int BuscaBinaria(noVertices *listaAdjacencias, int inicio, int fim, char *nomeBuscado, int *posInsercao){
     // caso o início seja maior que o fim, a busca não encontrou o elemento e retorna a posição correta para inserção
     if(inicio > fim){
-        return inicio;
+        *posInsercao = inicio;
+        return -1;
     }
     else{
         int meio = (inicio + fim) / 2;
         int valorRetorno = strcmp(listaAdjacencias[meio].tecnologiaOrigem, nomeBuscado);
 
-        // se o valor foi encontrado, retorna a posição correta para inserção
+        // se o valor foi encontrado, retorna a posição correta para manipulação
         if(valorRetorno == 0) 
             return meio;
         
         // se o valor não foi encontrado, chama a função de busca binária recursivamente
         else{
             if(valorRetorno < 0)
-                return BuscaBinaria(listaAdjacencias, inicio, meio - 1, nomeBuscado);
+                return BuscaBinaria(listaAdjacencias, inicio, meio - 1, nomeBuscado, posInsercao);
             else
-                return BuscaBinaria(listaAdjacencias, meio + 1, fim, nomeBuscado);
+                return BuscaBinaria(listaAdjacencias, meio + 1, fim, nomeBuscado, posInsercao);
         }
     }
 }
 
+void InsereListaAdjacencias(noVertices *listaAdjacencias, int *tamAtual, int posInsercao, char *nomeTecnologia){
+    for(int i = tamAtual - 1; i >= posInsercao; i--)
+        listaAdjacencias[i + 1] = listaAdjacencias[i];
+    
+    listaAdjacencias[posInsercao].grauEntrada = 0;
+    listaAdjacencias[posInsercao].grauSaida = 0;
+    strcpy(listaAdjacencias[posInsercao].tecnologiaOrigem, nomeTecnologia);
+    listaAdjacencias[posInsercao].listaLinear = CriaListaArestas();
+
+    tamAtual++;
+}
+
 void InsereGrafo(noVertices *listaAdjacencias, int *tamAtual, registroDados regDados){
-    int posAInserir = BuscaBinaria(listaAdjacencias, 0, tamAtual, regDados.TecnologiaOrigem.nome);
+    int posInsercao;
+    int posTecnologiaOrigem;
+    posTecnologiaOrigem = BuscaBinaria(listaAdjacencias, 0, tamAtual - 1, regDados.TecnologiaOrigem.nome, &posInsercao);
+
+    if(posTecnologiaOrigem == -1){
+        InsereListaAdjacencias(listaAdjacencias, &tamAtual, posInsercao, regDados.TecnologiaOrigem.nome);
+        posTecnologiaOrigem = posInsercao;
+    }
+
+    // insere na lista linear correspondente
+    InsereListaArestas(listaAdjacencias[posTecnologiaOrigem].listaLinear, regDados.peso, regDados.TecnologiaDestino.nome);
+    
+    // atualiza o grau de saida da tecnologiaOrigem
+    listaAdjacencias[posTecnologiaOrigem].grauSaida++;
+
+    // atualiza o grau de entrada da tecnologiaDestino
+    int posTecnologiaDestino;
+    posTecnologiaDestino = BuscaBinaria(listaAdjacencias, 0, tamAtual - 1, regDados.TecnologiaDestino.nome, &posInsercao);
+    if(posTecnologiaDestino == -1){
+        InsereListaAdjacencias(listaAdjacencias, &tamAtual, posInsercao, regDados.TecnologiaDestino.nome);
+        posTecnologiaDestino = posInsercao;
+    }
+    listaAdjacencias[posTecnologiaDestino].grauEntrada++;
 }
