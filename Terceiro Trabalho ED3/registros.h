@@ -20,7 +20,6 @@ typedef struct{
     int nroParesTecnologias;
 } cabecalhoDados;
 
-
 // define struct para campos de tamanho variavel
 typedef struct{
     int tamanho;
@@ -39,7 +38,6 @@ typedef struct{
     stringVariavel TecnologiaOrigem;
     stringVariavel TecnologiaDestino;
 } registroDados;
-
 
 /**
  * Lê o conteúdo do campo como um valor inteiro.

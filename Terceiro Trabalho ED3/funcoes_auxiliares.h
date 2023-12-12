@@ -6,7 +6,7 @@ Nome: Giovanna de Freitas Velasco - NUSP: 13676346
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "arvoreB.h"
+#include "registros.h"
 
 /** 
  * Abre um arquivo.
