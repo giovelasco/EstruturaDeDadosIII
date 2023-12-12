@@ -78,6 +78,43 @@ int main(){
             free(nomeIndiceBIN);
             break;
 
+        // funcionalidade 8
+        case 8:
+            nomeDadosBIN = readline();
+            Funcionalidade8(nomeDadosBIN);
+            free(nomeDadosBIN);
+            break;
+
+        // funcionalidade 9
+        case 9:
+            nomeDadosBIN = readline();
+            Funcionalidade9(nomeDadosBIN);
+            free(nomeDadosBIN);
+            break;
+
+        // funcionalidade 10
+        case 10:
+            nomeDadosBIN = readline();
+            scanf("%d", &n);
+            Funcionalidade10(nomeDadosBIN, n);
+            free(nomeDadosBIN);
+            break;
+
+        // funcionalidade 11
+        case 11:
+            nomeDadosBIN = readline();
+            Funcionalidade11(nomeDadosBIN);
+            free(nomeDadosBIN);
+            break;
+
+        // funcionalidade 12
+        case 12:
+            nomeDadosBIN = readline();
+            scanf("%d", &n);
+            Funcionalidade12(nomeDadosBIN, n);
+            free(nomeDadosBIN);
+            break;
+
         default:
             break;
     }
