@@ -27,7 +27,8 @@ void Funcionalidade8(char *nomeDadosBIN){
 
     // inicio da leitura dos registros de dados 
     registroDados regDados;
-    noVertices listasAdjacencias[regCab.nroTecnologias];
+    int tamAtual = 0; 
+    noVertices listaAdjacencias[regCab.nroTecnologias];
 
     while(fread(&(regDados.removido), sizeof(char), 1, bin) != 0){
         if(regDados.removido == '1'){ // caso o registro tenha sido removida, pula-se para o próximo registro
@@ -36,8 +37,9 @@ void Funcionalidade8(char *nomeDadosBIN){
 
         else{ // caso o registro exista, lê-se o registro
             LeRegistroDados(bin, &regDados);
-
-            InsereGrafo(&listasAdjacencias, regDados);
+            
+            if(regDados.TecnologiaDestino.tamanho != 0) // evitamos casos em que não há conexão
+                InsereGrafo(&listaAdjacencias, &tamAtual, regDados);
 
             int tamLixo = TAM_REGISTRO - (regDados.TecnologiaOrigem.tamanho + regDados.TecnologiaDestino.tamanho) * (sizeof(char)) - TAM_REGISTRO_FIXO;
 

@@ -10,8 +10,8 @@ typedef struct noVertices_t noVertices;
 struct noVertices_t{
     int grauEntrada;
     int grauSaida;
-    char *TecnologiaOrigem;
+    char *tecnologiaOrigem;
     listaArestas *listaLinear;
 };
 
-void InsereGrafo(noVertices *listaAdjacencias, registroDados regDados);
+void InsereGrafo(noVertices *listaAdjacencias, int *tamAtual, registroDados regDados);
