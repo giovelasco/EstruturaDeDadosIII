@@ -16,7 +16,7 @@ void Funcionalidade8(char *nomeDadosBIN){
 
     // inicio da leitura dos registros de cabecalho
     cabecalhoDados regCab;
-    LeRegistroCabecalho(bin, &regCab);
+    LeCabecalhoDados(bin, &regCab);
 
     // verifica se o arquivo está consistente
     if(regCab.status == '0'){
@@ -29,8 +29,9 @@ void Funcionalidade8(char *nomeDadosBIN){
     registroDados regDados;
     int tamAtual = 0; 
     noVertices listaAdjacencias[regCab.nroTecnologias];
-
-    while(fread(&(regDados.removido), sizeof(char), 1, bin) != 0){
+    
+    fread(&(regDados.removido), sizeof(char), 1, bin);
+    //while(fread(&(regDados.removido), sizeof(char), 1, bin) != 0){
         if(regDados.removido == '1'){ // caso o registro tenha sido removida, pula-se para o próximo registro
             fseek(bin, TAM_REGISTRO - 1, SEEK_CUR);
         }
@@ -39,14 +40,13 @@ void Funcionalidade8(char *nomeDadosBIN){
             LeRegistroDados(bin, &regDados);
             
             if(regDados.TecnologiaDestino.tamanho != 0) // evitamos casos em que não há conexão
-                InsereGrafo(&listaAdjacencias, &tamAtual, regDados);
+                InsereGrafo(listaAdjacencias, &tamAtual, regDados);
 
             int tamLixo = TAM_REGISTRO - (regDados.TecnologiaOrigem.tamanho + regDados.TecnologiaDestino.tamanho) * (sizeof(char)) - TAM_REGISTRO_FIXO;
 
             fseek(bin, tamLixo, SEEK_CUR);
         }
-    }
-
+    //}
 }
 
 void Funcionalidade9(char *nomeDadosBIN){

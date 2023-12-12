@@ -34,7 +34,7 @@ int BuscaBinaria(noVertices *listaAdjacencias, int inicio, int fim, char *nomeBu
 }
 
 void InsereListaAdjacencias(noVertices *listaAdjacencias, int *tamAtual, int posInsercao, char *nomeTecnologia){
-    for(int i = tamAtual - 1; i >= posInsercao; i--)
+    for(int i = *tamAtual - 1; i >= posInsercao; i--)
         listaAdjacencias[i + 1] = listaAdjacencias[i];
     
     listaAdjacencias[posInsercao].grauEntrada = 0;
@@ -42,16 +42,16 @@ void InsereListaAdjacencias(noVertices *listaAdjacencias, int *tamAtual, int pos
     strcpy(listaAdjacencias[posInsercao].tecnologiaOrigem, nomeTecnologia);
     listaAdjacencias[posInsercao].listaLinear = CriaListaArestas();
 
-    tamAtual++;
+    (*tamAtual)++;
 }
 
 void InsereGrafo(noVertices *listaAdjacencias, int *tamAtual, registroDados regDados){
     int posInsercao;
     int posTecnologiaOrigem;
-    posTecnologiaOrigem = BuscaBinaria(listaAdjacencias, 0, tamAtual - 1, regDados.TecnologiaOrigem.nome, &posInsercao);
+    posTecnologiaOrigem = BuscaBinaria(listaAdjacencias, 0, (*tamAtual) - 1, regDados.TecnologiaOrigem.nome, &posInsercao);
 
     if(posTecnologiaOrigem == -1){
-        InsereListaAdjacencias(listaAdjacencias, &tamAtual, posInsercao, regDados.TecnologiaOrigem.nome);
+        InsereListaAdjacencias(listaAdjacencias, tamAtual, posInsercao, regDados.TecnologiaOrigem.nome);
         posTecnologiaOrigem = posInsercao;
     }
 
@@ -63,9 +63,9 @@ void InsereGrafo(noVertices *listaAdjacencias, int *tamAtual, registroDados regD
 
     // atualiza o grau de entrada da tecnologiaDestino
     int posTecnologiaDestino;
-    posTecnologiaDestino = BuscaBinaria(listaAdjacencias, 0, tamAtual - 1, regDados.TecnologiaDestino.nome, &posInsercao);
+    posTecnologiaDestino = BuscaBinaria(listaAdjacencias, 0, (*tamAtual) - 1, regDados.TecnologiaDestino.nome, &posInsercao);
     if(posTecnologiaDestino == -1){
-        InsereListaAdjacencias(listaAdjacencias, &tamAtual, posInsercao, regDados.TecnologiaDestino.nome);
+        InsereListaAdjacencias(listaAdjacencias, tamAtual, posInsercao, regDados.TecnologiaDestino.nome);
         posTecnologiaDestino = posInsercao;
     }
     listaAdjacencias[posTecnologiaDestino].grauEntrada++;
