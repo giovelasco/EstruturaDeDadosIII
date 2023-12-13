@@ -29,9 +29,11 @@ void DestroiListaArestas(listaArestas *lista){
             noAtual = lista->ini;
         }
     }
+
+    free(lista);
 }
 
-void InsereListaArestas(listaArestas *lista, int peso, char *tecnologiaDestino){
+void InsereAresta(listaArestas *lista, int peso, char *tecnologiaDestino){
     // trata os casos em que nomeTecnologiaDestino é nulo
     if(strlen(tecnologiaDestino) == 0) return;
 
@@ -50,9 +52,8 @@ void InsereListaArestas(listaArestas *lista, int peso, char *tecnologiaDestino){
 
         return; 
     }
-
     // busca pela posição desejada, tendo referência final ao elemento anterior à posição em que será inserido
-    noAresta *aux = (noAresta *) malloc(sizeof(noAresta));
+    noAresta *aux = NULL;
     aux = lista->ini;
     while(aux->prox != NULL && strcmp(novoNo->tecnologiaDestino, aux->prox->tecnologiaDestino) > 0)
         aux = aux->prox;

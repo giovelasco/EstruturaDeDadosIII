@@ -5,13 +5,14 @@ Nome: Giovanna de Freitas Velasco - NUSP: 13676346
 
 #include "lista_encadeada.h"
 
-typedef struct noVertices_t noVertices;
-
-struct noVertices_t{
+typedef struct{
     int grauEntrada;
     int grauSaida;
     char *tecnologiaOrigem;
+    int grupo;
     listaArestas *listaLinear;
-};
+} noVertices;
 
 void InsereGrafo(noVertices *listaAdjacencias, int *tamAtual, registroDados regDados);
+
+void ImprimeGrafo(noVertices *listaAdjacencias, int posVertice);

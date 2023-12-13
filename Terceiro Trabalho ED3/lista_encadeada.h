@@ -35,4 +35,4 @@ void DestroiListaArestas(listaArestas *lista);
  * @param l ponteiro para lista encadeada
  * @param aInserir string a ser inserida
 */
-void InsereListaArestas(listaArestas *lista, int peso, char *tecnologiaDestino);
+void InsereAresta(listaArestas *lista, int peso, char *tecnologiaDestino);

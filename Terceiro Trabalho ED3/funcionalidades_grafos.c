@@ -25,13 +25,13 @@ void Funcionalidade8(char *nomeDadosBIN){
         return;
     }
 
-    // inicio da leitura dos registros de dados 
     registroDados regDados;
+
     int tamAtual = 0; 
-    noVertices listaAdjacencias[regCab.nroTecnologias];
+    noVertices *listaAdjacencias = (noVertices *) malloc(regCab.nroTecnologias * (sizeof(noVertices)));
     
-    fread(&(regDados.removido), sizeof(char), 1, bin);
-    //while(fread(&(regDados.removido), sizeof(char), 1, bin) != 0){
+    // inicio da leitura dos registros de dados 
+    while(fread(&(regDados.removido), sizeof(char), 1, bin) != 0){
         if(regDados.removido == '1'){ // caso o registro tenha sido removida, pula-se para o próximo registro
             fseek(bin, TAM_REGISTRO - 1, SEEK_CUR);
         }
@@ -41,12 +41,26 @@ void Funcionalidade8(char *nomeDadosBIN){
             
             if(regDados.TecnologiaDestino.tamanho != 0) // evitamos casos em que não há conexão
                 InsereGrafo(listaAdjacencias, &tamAtual, regDados);
-
+            
             int tamLixo = TAM_REGISTRO - (regDados.TecnologiaOrigem.tamanho + regDados.TecnologiaDestino.tamanho) * (sizeof(char)) - TAM_REGISTRO_FIXO;
+
+            free(regDados.TecnologiaOrigem.nome);
+            free(regDados.TecnologiaDestino.nome);
 
             fseek(bin, tamLixo, SEEK_CUR);
         }
-    //}
+    }
+
+    for(int i = 0; i < tamAtual; i++){
+        ImprimeGrafo(listaAdjacencias, i);
+    }
+    
+    for(int i = 0; i < tamAtual; i++){
+        free(listaAdjacencias[i].tecnologiaOrigem);
+        DestroiListaArestas(listaAdjacencias[i].listaLinear);
+    }
+    free(listaAdjacencias);
+    fclose(bin);
 }
 
 void Funcionalidade9(char *nomeDadosBIN){
