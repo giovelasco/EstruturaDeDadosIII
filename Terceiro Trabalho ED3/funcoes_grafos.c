@@ -18,7 +18,7 @@ void ImprimeGrafo(noVertices *listaAdjacencias, int posVertice){
         printf("%d ", listaAdjacencias[posVertice].grauSaida);
         printf("%d ", listaAdjacencias[posVertice].grauEntrada + listaAdjacencias[posVertice].grauSaida);
         printf("%s ", noAtual->tecnologiaDestino);
-        printf("%d ", noAtual->peso);
+        printf("%d", noAtual->peso);
         printf("\n");
 
         noAtual = noAtual->prox;
@@ -96,6 +96,6 @@ void InsereGrafo(noVertices *listaAdjacencias, int *tamAtual, registroDados regD
         InsereVertice(listaAdjacencias, tamAtual, posInsercao, regDados.TecnologiaDestino.nome);
         posTecnologiaDestino = posInsercao;
     }
-    
+
     listaAdjacencias[posTecnologiaDestino].grauEntrada++;
 }

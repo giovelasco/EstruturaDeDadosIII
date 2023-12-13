@@ -39,7 +39,7 @@ void Funcionalidade8(char *nomeDadosBIN){
         else{ // caso o registro exista, lê-se o registro
             LeRegistroDados(bin, &regDados);
             
-            if(regDados.TecnologiaDestino.tamanho != 0) // evitamos casos em que não há conexão
+            if(regDados.grupo != -1 && regDados.TecnologiaDestino.tamanho != 0) // evitamos casos em que não há conexão
                 InsereGrafo(listaAdjacencias, &tamAtual, regDados);
             
             int tamLixo = TAM_REGISTRO - (regDados.TecnologiaOrigem.tamanho + regDados.TecnologiaDestino.tamanho) * (sizeof(char)) - TAM_REGISTRO_FIXO;
