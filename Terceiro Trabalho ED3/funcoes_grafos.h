@@ -13,6 +13,12 @@ typedef struct{
     listaArestas *listaLinear;
 } noVertices;
 
-void InsereGrafo(noVertices *listaAdjacencias, int *tamAtual, registroDados regDados);
+int BuscaBinaria(noVertices *listaAdj, int inicio, int fim, char *nomeBuscado, int *posInsercao);
 
-void ImprimeGrafo(noVertices *listaAdjacencias, int posVertice);
+void GeraGrafo(FILE *bin, noVertices *listaAdj, int *tamAtual, int tipoGrafo);
+
+void InsereGrafo(noVertices *listaAdj, int *tamAtual, char *tecnologiaOrigem, int peso, int grupo, char *tecnologiaDestino, int transp);
+
+void ImprimeGrafo(noVertices *listaAdj, int tamAtual);
+
+void DestroiGrafo(noVertices *listaAdj, int tamAtual);

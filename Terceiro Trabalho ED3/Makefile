@@ -9,4 +9,4 @@ val :
 
 comp :
 	@echo "Comparando arquivos de saída..."
-	@diff -u 2.out teste.out && echo "Os arquivos são iguais." || echo "Os arquivos são diferentes."
+	@diff -u teste.out 5.out && echo "Os arquivos são iguais." || echo "Os arquivos são diferentes."
