@@ -115,5 +115,41 @@ void Funcionalidade11(char *nomeDadosBIN){
 }
 
 void Funcionalidade12(char *nomeDadosBIN, int n){
+    // abre os arquivos
+    FILE *bin;
+    bin = AbrirArquivo(bin, nomeDadosBIN, "rb");
+    if(bin == NULL) return;
+
+    // inicio da leitura dos registros de cabecalho
+    cabecalhoDados regCab;
+    LeCabecalhoDados(bin, &regCab);
+
+    // verifica se o arquivo está consistente
+    if(regCab.status == '0'){
+        printf("Falha no processamento do arquivo.");
+        fclose(bin);
+        return;
+    }
+
+    int tamAtual = 0; 
+    noVertices *listaAdj = (noVertices *) malloc(regCab.nroTecnologias * (sizeof(noVertices)));
     
+    GeraGrafo(bin, listaAdj, &tamAtual, 1);
+
+    int pesoCaminho;
+    char *nomeTecnologiaOrigem, *nomeTecnologiaDestino;
+    for(int i = 0; i < n; i++){
+        nomeTecnologiaOrigem = readlineAspas();
+        nomeTecnologiaDestino = readlineAspas();
+
+
+
+        printf("%s %s: %d\n", nomeTecnologiaOrigem, nomeTecnologiaDestino, pesoCaminho);
+
+        free(nomeTecnologiaOrigem);
+        free(nomeTecnologiaDestino);
+    }
+
+    DestroiGrafo(listaAdj, tamAtual);
+    fclose(bin);
 }
