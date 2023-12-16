@@ -24,20 +24,6 @@ FILE *AbrirArquivo(FILE *arquivo, char *nomeArquivo, char *modoAbertura);
 int VerificaStatus(FILE *bin);
 
 /**
- * Realiza a busca em um arquivo de dados a partir de um campo desejado.
- * @param dadosBIN ponteiro para um arquivo de dados .bin
- * @param nomeCampo string do nome do campo desejado
-*/
-void BuscaArquivoDadosCriterio(FILE *dadosBIN, char *nomeCampo);
-
-/**
- * Realiza a busca em um arquivo de dados a partir de um RRN.
- * @param dadosBIN ponteiro para um arquivo de dados .bin
- * @param RRN RRN desejado
-*/
-void BuscaArquivoDadosRRN(FILE *dadosBIN, int RRN);
-
-/**
  * Lê uma palavra digitada no terminal.
  * @returns retorna a palavra lida
 */

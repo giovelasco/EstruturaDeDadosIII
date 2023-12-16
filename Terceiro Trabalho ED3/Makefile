@@ -5,7 +5,7 @@ run :
 	./programaTrab
 
 val :
-	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes -s ./programaTrab < teste.in > teste.out
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes -s ./programaTrab < teste.in > bingrafo6.out
 
 comp :
 	@echo "Comparando arquivos de saída..."

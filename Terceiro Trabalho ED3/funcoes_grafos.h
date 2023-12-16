@@ -24,3 +24,5 @@ void InsereNoGrafoTransposto(noVertice *listaAdj, int *tamAtual, char *tecnologi
 void ImprimeGrafo(noVertice *listaAdj, int tamAtual);
 
 void DestroiGrafo(noVertice *listaAdj, int tamAtual);
+
+int Dijkstra(noVertice *listaAdj, int tamAtual, char *nomeTecnologiaOrigem, char *nomeTecnologiaDestino, cabecalhoDados regCab);
