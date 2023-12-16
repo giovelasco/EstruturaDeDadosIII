@@ -18,7 +18,7 @@ int EstaNoConjunto(conjunto *c, int elemento){
 
 void AdicionaElemento(conjunto *c, int elemento){
     if(!EstaNoConjunto(c, elemento)){
-        c->elementos = (int *) realloc(c->elementos, (c->size + 1));
+        c->elementos = (int *) realloc(c->elementos, (c->size + 1) * sizeof(int));
         c->elementos[c->size] = elemento;
         c->size++;
     }
@@ -34,4 +34,8 @@ conjunto DiferencaConjuntos(conjunto *c1, conjunto *c2){
     }
 
     return diferenca;
+}
+
+void DestroiConjunto(conjunto *c){
+    free(c->elementos);
 }
