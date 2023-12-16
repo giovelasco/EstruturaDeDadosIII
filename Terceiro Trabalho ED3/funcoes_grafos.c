@@ -7,6 +7,9 @@ Nome: Giovanna de Freitas Velasco - NUSP: 13676346
 #include <stdlib.h>
 #include <string.h>
 #include "funcoes_grafos.h"
+#include "conjunto.h"
+
+#define INT_MAX 100000
 
 void ImprimeGrafo(noVertice *listaAdj, int tamAtual){
     for(int i = 0; i < tamAtual; i++){
@@ -171,4 +174,71 @@ void DestroiGrafo(noVertice *listaAdj, int tamAtual){
         DestroiListaArestas(listaAdj[i].listaLinear);
     }
     free(listaAdj);
+}
+
+int Dijkstra(noVertice *listaAdj, int tamAtual, char *nomeTecnologiaOrigem, char *nomeTecnologiaDestino, cabecalhoDados regCab){
+    int vetorDistancias[regCab.nroTecnologias]; // D
+    conjunto verticesPercorridos; // S
+    CriaConjunto(&verticesPercorridos);
+
+    conjunto todosVertices; // V
+    CriaConjunto(&todosVertices);
+
+    int posInsercao;
+    int posOrigem = BuscaBinaria(listaAdj, 0, regCab.nroTecnologias, nomeTecnologiaOrigem, &posInsercao);
+
+    AdicionaElemento(&verticesPercorridos, posOrigem);
+    for(int i = 0; i < regCab.nroTecnologias; i++){
+        AdicionaElemento(&todosVertices, i);
+        vetorDistancias[i] = INT_MAX; 
+    } 
+    vetorDistancias[posOrigem] = 0; // a distância da origem em relação a si mesma é igual a zero
+    
+    // inicializa o vetor de distancias com o maior valor possível
+    noAresta *noAtual = listaAdj[posOrigem].listaLinear->ini;
+    for(int i = 0; i < listaAdj[posOrigem].grauSaida; i++){
+        int posDestino = BuscaBinaria(listaAdj, 0, regCab.nroTecnologias, noAtual->nomeTecnologia, &posInsercao);
+        vetorDistancias[posDestino] = noAtual->peso;
+        noAtual = noAtual->prox;
+    }
+
+    conjunto verticesAPercorrer;
+    CriaConjunto(&verticesAPercorrer);
+
+    int posMinima;
+    int distanciaMinima = INT_MAX + 10;  
+
+    verticesAPercorrer = DiferencaConjuntos(&todosVertices, &verticesPercorridos);
+
+    while(verticesAPercorrer.size != 0){ // enquanto ainda houver vértices a serem analisados
+        // encontra o menor vértice em vetorDistancias
+        distanciaMinima = vetorDistancias[verticesAPercorrer.elementos[0]];
+        posMinima = 0;
+        for(int i = 1; i < verticesAPercorrer.size; i++){
+            if(vetorDistancias[verticesAPercorrer.elementos[i]] < distanciaMinima){
+                distanciaMinima = vetorDistancias[verticesAPercorrer.elementos[i]];
+                posMinima = i;
+            }
+        }
+
+        AdicionaElemento(&verticesPercorridos, verticesAPercorrer.elementos[posMinima]); // adiciona o vértice a ser analisado na iteração
+
+        noAtual = listaAdj[verticesAPercorrer.elementos[posMinima]].listaLinear->ini;
+        for(int i = 0; i < listaAdj[verticesAPercorrer.elementos[posMinima]].grauSaida; i++){
+            int posDestino = BuscaBinaria(listaAdj, 0, regCab.nroTecnologias, noAtual->nomeTecnologia, &posInsercao);
+            if(vetorDistancias[verticesAPercorrer.elementos[posMinima]] + noAtual->peso < vetorDistancias[posDestino])
+                vetorDistancias[posDestino] = vetorDistancias[verticesAPercorrer.elementos[posMinima]] + noAtual->peso;
+            noAtual = noAtual->prox;
+        }
+
+        DestroiConjunto(&verticesAPercorrer);
+        verticesAPercorrer = DiferencaConjuntos(&todosVertices, &verticesPercorridos);
+    }
+
+    DestroiConjunto(&verticesPercorridos);
+    DestroiConjunto(&todosVertices);
+    DestroiConjunto(&verticesAPercorrer);
+
+    int posDesejada = BuscaBinaria(listaAdj, 0, regCab.nroTecnologias, nomeTecnologiaDestino, &posInsercao);
+    return (vetorDistancias[posDesejada] == INT_MAX) ? -1 : vetorDistancias[posDesejada];
 }

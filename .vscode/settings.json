@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "arvoreb.h": "c",
-        "funcionalidades_grafos.h": "c"
+        "funcionalidades_grafos.h": "c",
+        "stdlib.h": "c"
     }
 }
