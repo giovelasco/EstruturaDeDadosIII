@@ -157,7 +157,7 @@ void BuscaRecursivaEmProfundidade(int posVerticeAtual, noVertice *listaAdj, int 
 
             if(cores[posVerticeSucessor] == BRANCO){
                 antecessor[posVerticeSucessor] = posVerticeAtual;
-                BuscaRecursivaEmProfundidade(verticeSucessor, listaAdj, tamAtual, tempo, tempoDescoberta, tempoTermino, cores, antecessor, 
+                BuscaRecursivaEmProfundidade(posVerticeSucessor, listaAdj, tamAtual, tempo, tempoDescoberta, tempoTermino, cores, antecessor, 
                                             numRestantes);
             }
             else{
@@ -200,9 +200,9 @@ void BuscaEmProfundidade(noVertice *listaAdj, int tamAtual){
     }
 
     while(numRestantes > 0){
-        posVerticeRaiz = VerticeMaiorTempoTermino(listaAdj, tamAtual, &verticesRestantes, &tempoTermino);
-        BuscaRecursivaEmProfundidade(posVerticeRaiz, listaAdj, tamAtual, &tempo, &tempoDescoberta, &tempoTermino, &cores,
-                                    &antecessor, &numRestantes);
+        posVerticeRaiz = VerticeMaiorTempoTermino(listaAdj, tamAtual, verticesRestantes, tempoTermino);
+        BuscaRecursivaEmProfundidade(posVerticeRaiz, listaAdj, tamAtual, &tempo, tempoDescoberta, tempoTermino, cores,
+                                    antecessor, &numRestantes);
     }
 }
 
@@ -229,8 +229,7 @@ void Funcionalidade11(char *nomeDadosBIN){
     
     GeraGrafo(bin, listaAdj, &tamAtual, 0);
 
-    // BuscaEmProfundidade();
-
+    BuscaEmProfundidade(listaAdj, tamAtual);
 
     DestroiGrafo(listaAdj, tamAtual);
     fclose(bin);
