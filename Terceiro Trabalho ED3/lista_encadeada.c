@@ -33,9 +33,9 @@ void DestroiListaArestas(listaArestas *lista){
     free(lista);
 }
 
-void InsereAresta(listaArestas *lista, int peso, char *tecnologiaDestino){
+int InsereAresta(listaArestas *lista, int peso, char *tecnologiaDestino){
     // trata os casos em que nomeTecnologiaDestino é nulo
-    if(strlen(tecnologiaDestino) == 0) return;
+    if(strlen(tecnologiaDestino) == 0) return 0;
 
     // cria o novo nó a ser inserido na lista
     noAresta *novoNo = (noAresta *) malloc(sizeof(noAresta));
@@ -60,4 +60,6 @@ void InsereAresta(listaArestas *lista, int peso, char *tecnologiaDestino){
     
     novoNo->prox = aux->prox;
     aux->prox = novoNo;
+
+    return 1;
 }
