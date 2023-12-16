@@ -17,7 +17,7 @@ int BuscaBinaria(noVertices *listaAdj, int inicio, int fim, char *nomeBuscado, i
 
 void GeraGrafo(FILE *bin, noVertices *listaAdj, int *tamAtual, int tipoGrafo);
 
-void InsereGrafo(noVertices *listaAdj, int *tamAtual, char *tecnologiaOrigem, int peso, int grupo, char *tecnologiaDestino, int transp);
+void InsereNoGrafo(noVertices *listaAdj, int *tamAtual, char *tecnologiaOrigem, int peso, int grupo, char *tecnologiaDestino, int transp);
 
 void ImprimeGrafo(noVertices *listaAdj, int tamAtual);
 

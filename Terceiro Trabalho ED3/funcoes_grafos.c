@@ -69,7 +69,7 @@ void InsereVertice(noVertices *listaAdj, int *tamAtual, int posInsercao, char *n
     (*tamAtual)++;
 }
 
-void InsereGrafo(noVertices *listaAdj, int *tamAtual, char *tecnologiaOrigem, int peso, int grupo, char *tecnologiaDestino, int transp){
+void InsereNoGrafo(noVertices *listaAdj, int *tamAtual, char *tecnologiaOrigem, int peso, int grupo, char *tecnologiaDestino, int transp){
     int posInsercao;
     int posTecnologiaOrigem;
 
@@ -119,12 +119,12 @@ void GeraGrafo(FILE *bin, noVertices *listaAdj, int *tamAtual, int tipoGrafo){
             if(regDados.grupo != -1 && regDados.TecnologiaDestino.tamanho != 0){ // evitamos casos em que não há conexão
                 switch (tipoGrafo){
                     case 0:
-                        InsereGrafo(listaAdj, tamAtual, regDados.TecnologiaOrigem.nome, regDados.peso, regDados.grupo, 
+                        InsereNoGrafo(listaAdj, tamAtual, regDados.TecnologiaOrigem.nome, regDados.peso, regDados.grupo, 
                                 regDados.TecnologiaDestino.nome, tipoGrafo);
                         break;
                     
                     case 1:
-                        InsereGrafo(listaAdj, tamAtual, regDados.TecnologiaDestino.nome, regDados.peso, regDados.grupo, 
+                        InsereNoGrafo(listaAdj, tamAtual, regDados.TecnologiaDestino.nome, regDados.peso, regDados.grupo, 
                                 regDados.TecnologiaOrigem.nome, tipoGrafo);
                         break;
                 }
