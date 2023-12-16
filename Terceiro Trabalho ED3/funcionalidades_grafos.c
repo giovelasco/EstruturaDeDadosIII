@@ -157,7 +157,8 @@ void BuscaRecursivaEmProfundidade(int posVerticeAtual, noVertice *listaAdj, int 
 
             if(cores[posVerticeSucessor] == BRANCO){
                 antecessor[posVerticeSucessor] = posVerticeAtual;
-                BuscaRecursivaEmProfundidade(verticeSucessor, listaAdj, tamAtual, tempo, tempoDescoberta, tempoTermino, cores, antecessor);
+                BuscaRecursivaEmProfundidade(verticeSucessor, listaAdj, tamAtual, tempo, tempoDescoberta, tempoTermino, cores, antecessor, 
+                                            numRestantes);
             }
             else{
                 if(aresta->prox == NULL) fimListaAdj = '1';
@@ -190,14 +191,18 @@ void BuscaEmProfundidade(noVertice *listaAdj, int tamAtual){
 
     // inicializa o grafo com todos os vértices brancos, antecessores nulos e todos os vértices restantes
     for(int i = 0; i < tamAtual; i++){
+        tempoDescoberta[i] = 0;
+        tempoTermino[i] = 0;
         cores[i] = BRANCO;
-        antecessor[i] = -1;
+        
         verticesRestantes[i] = 1;
+        antecessor[i] = -1;
     }
 
     while(numRestantes > 0){
         posVerticeRaiz = VerticeMaiorTempoTermino(listaAdj, tamAtual, &verticesRestantes, &tempoTermino);
-        BuscaRecursivaEmProfundidade(posVerticeRaiz, listaAdj, tamAtual, &tempo);
+        BuscaRecursivaEmProfundidade(posVerticeRaiz, listaAdj, tamAtual, &tempo, &tempoDescoberta, &tempoTermino, &cores,
+                                    &antecessor, &numRestantes);
     }
 }
 
