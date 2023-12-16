@@ -29,7 +29,7 @@ void Funcionalidade8(char *nomeDadosBIN){
     }
 
     int tamAtual = 0; 
-    noVertices *listaAdj = (noVertices *) malloc(regCab.nroTecnologias * (sizeof(noVertices)));
+    noVertice *listaAdj = (noVertice *) malloc(regCab.nroTecnologias * (sizeof(noVertice)));
 
     GeraGrafo(bin, listaAdj, &tamAtual, 0);
 
@@ -57,7 +57,7 @@ void Funcionalidade9(char *nomeDadosBIN){
     }
 
     int tamAtual = 0; 
-    noVertices *listaAdjTransposta = (noVertices *) malloc(regCab.nroTecnologias * (sizeof(noVertices)));
+    noVertice *listaAdjTransposta = (noVertice *) malloc(regCab.nroTecnologias * (sizeof(noVertice)));
     
     GeraGrafo(bin, listaAdjTransposta, &tamAtual, 1);
 
@@ -85,7 +85,7 @@ void Funcionalidade10(char *nomeDadosBIN, int n){
     }
 
     int tamAtual = 0; 
-    noVertices *listaAdjTransposta = (noVertices *) malloc(regCab.nroTecnologias * (sizeof(noVertices)));
+    noVertice *listaAdjTransposta = (noVertice *) malloc(regCab.nroTecnologias * (sizeof(noVertice)));
     
     GeraGrafo(bin, listaAdjTransposta, &tamAtual, 1);
 
@@ -99,10 +99,10 @@ void Funcionalidade10(char *nomeDadosBIN, int n){
         
         noAresta *noAtual = listaAdjTransposta[posTecnologiaDestino].listaLinear->ini;
         for(int j = 0; j < listaAdjTransposta[posTecnologiaDestino].grauSaida - 1; j++){
-            printf("%s, ", noAtual->tecnologiaDestino);
+            printf("%s, ", noAtual->nomeTecnologia);
             noAtual = noAtual->prox;
         }
-        printf("%s\n\n", noAtual->tecnologiaDestino);
+        printf("%s\n\n", noAtual->nomeTecnologia);
         noAtual = noAtual->prox;
 
         free(noAtual);
@@ -131,7 +131,7 @@ void Funcionalidade11(char *nomeDadosBIN){
     }
 
     int tamAtual = 0; 
-    noVertices *listaAdj = (noVertices *) malloc(regCab.nroTecnologias * (sizeof(noVertices)));
+    noVertice *listaAdj = (noVertice *) malloc(regCab.nroTecnologias * (sizeof(noVertice)));
     
     GeraGrafo(bin, listaAdj, &tamAtual, 0);
 
@@ -142,7 +142,7 @@ void Funcionalidade11(char *nomeDadosBIN){
     fclose(bin);
 }
 
-int Dijkstra(noVertices *listaAdj, int tamAtual, char *nomeTecnologiaOrigem, char *nomeTecnologiaDestino, cabecalhoDados regCab){
+int Dijkstra(noVertice *listaAdj, int tamAtual, char *nomeTecnologiaOrigem, char *nomeTecnologiaDestino, cabecalhoDados regCab){
     int vetorDistancias[regCab.nroTecnologias]; // D
     conjunto verticesPercorridos; // S
     CriaConjunto(&verticesPercorridos);
@@ -163,7 +163,7 @@ int Dijkstra(noVertices *listaAdj, int tamAtual, char *nomeTecnologiaOrigem, cha
     // inicializa o vetor de distancias com o maior valor possível
     noAresta *noAtual = listaAdj[posOrigem].listaLinear->ini;
     for(int i = 0; i < listaAdj[posOrigem].grauSaida; i++){
-        int posDestino = BuscaBinaria(listaAdj, 0, regCab.nroTecnologias, noAtual->tecnologiaDestino, &posInsercao);
+        int posDestino = BuscaBinaria(listaAdj, 0, regCab.nroTecnologias, noAtual->nomeTecnologia, &posInsercao);
         vetorDistancias[posDestino] = noAtual->peso;
         noAtual = noAtual->prox;
     }
@@ -175,15 +175,9 @@ int Dijkstra(noVertices *listaAdj, int tamAtual, char *nomeTecnologiaOrigem, cha
     int distanciaMinima = INT_MAX + 10;  
 
     verticesAPercorrer = DiferencaConjuntos(&todosVertices, &verticesPercorridos);
-    
-    // for(int i = 0;  i < verticesAPercorrer.size; i++){
-    //     printf("verticesAPercorrer[%d]: %d\n", i, verticesAPercorrer.elementos[i]);
-    // }
 
-    while(verticesAPercorrer.size != 1){ // enquanto ainda houver vértices a serem analisados
-    //for(int m = 0; m < 112; m++){
+    while(verticesAPercorrer.size != 0){ // enquanto ainda houver vértices a serem analisados
         // encontra o menor vértice em vetorDistancias
-        //printf("\nverticesAPercorrer.size: %d\n", verticesAPercorrer.size);
         distanciaMinima = vetorDistancias[verticesAPercorrer.elementos[0]];
         posMinima = 0;
         for(int i = 1; i < verticesAPercorrer.size; i++){
@@ -194,11 +188,10 @@ int Dijkstra(noVertices *listaAdj, int tamAtual, char *nomeTecnologiaOrigem, cha
         }
 
         AdicionaElemento(&verticesPercorridos, verticesAPercorrer.elementos[posMinima]); // adiciona o vértice a ser analisado na iteração
-        //printf("posMinima: %d\n", posMinima);
 
         noAtual = listaAdj[verticesAPercorrer.elementos[posMinima]].listaLinear->ini;
         for(int i = 0; i < listaAdj[verticesAPercorrer.elementos[posMinima]].grauSaida; i++){
-            int posDestino = BuscaBinaria(listaAdj, 0, regCab.nroTecnologias, noAtual->tecnologiaDestino, &posInsercao);
+            int posDestino = BuscaBinaria(listaAdj, 0, regCab.nroTecnologias, noAtual->nomeTecnologia, &posInsercao);
             if(vetorDistancias[verticesAPercorrer.elementos[posMinima]] + noAtual->peso < vetorDistancias[posDestino])
                 vetorDistancias[posDestino] = vetorDistancias[verticesAPercorrer.elementos[posMinima]] + noAtual->peso;
             noAtual = noAtual->prox;
@@ -206,49 +199,6 @@ int Dijkstra(noVertices *listaAdj, int tamAtual, char *nomeTecnologiaOrigem, cha
 
         DestroiConjunto(&verticesAPercorrer);
         verticesAPercorrer = DiferencaConjuntos(&todosVertices, &verticesPercorridos);
-    }
-
-    printf("\n");
-    printf("verticesAPercorrer.size: %d\n", verticesAPercorrer.size);
-    for(int i = 0;  i < verticesAPercorrer.size; i++){
-        printf("verticesAPercorrer[%d]: %d\n", i, verticesAPercorrer.elementos[i]);
-    }
-
-    distanciaMinima = vetorDistancias[verticesAPercorrer.elementos[0]];
-    posMinima = 0;
-    for(int i = 1; i < verticesAPercorrer.size; i++){
-        if(vetorDistancias[verticesAPercorrer.elementos[i]] < distanciaMinima){
-            distanciaMinima = vetorDistancias[verticesAPercorrer.elementos[i]];
-            posMinima = i;
-        }
-    }
-
-    
-    AdicionaElemento(&verticesPercorridos, verticesAPercorrer.elementos[posMinima]); // adiciona o vértice a ser analisado na iteração
-    
-    
-    printf("verticesAPercorrer.elementos[posMinima]: %d\n", verticesAPercorrer.elementos[posMinima]);
-
-    // noAtual = listaAdj[verticesAPercorrer.elementos[posMinima]].listaLinear->ini;
-
-    /*
-    for(int i = 0; i < listaAdj[verticesAPercorrer.elementos[posMinima]].grauSaida; i++){
-        int posDestino = BuscaBinaria(listaAdj, 0, regCab.nroTecnologias, noAtual->tecnologiaDestino, &posInsercao);
-        if(vetorDistancias[verticesAPercorrer.elementos[posMinima]] + noAtual->peso < vetorDistancias[posDestino]){
-            vetorDistancias[posDestino] = vetorDistancias[verticesAPercorrer.elementos[posMinima]] + noAtual->peso;
-        }
-        noAtual = noAtual->prox;
-    }
-    */
-
-    DestroiConjunto(&verticesAPercorrer);
-    verticesAPercorrer = DiferencaConjuntos(&todosVertices, &verticesPercorridos);
-    
-
-    printf("\n\n");
-    printf("verticesAPercorrer.size: %d\n", verticesAPercorrer.size);
-    for(int i = 0;  i < verticesAPercorrer.size; i++){
-        printf("verticesAPercorrer[%d]: %d\n", i, verticesAPercorrer.elementos[i]);
     }
 
     DestroiConjunto(&verticesPercorridos);
@@ -277,7 +227,7 @@ void Funcionalidade12(char *nomeDadosBIN, int n){
     }
 
     int tamAtual = 0; 
-    noVertices *listaAdj = (noVertices *) malloc(regCab.nroTecnologias * (sizeof(noVertices)));
+    noVertice *listaAdj = (noVertice *) malloc(regCab.nroTecnologias * (sizeof(noVertice)));
     
     GeraGrafo(bin, listaAdj, &tamAtual, 0);
 
@@ -288,16 +238,10 @@ void Funcionalidade12(char *nomeDadosBIN, int n){
         nomeTecnologiaOrigem = readlineAspas();
         nomeTecnologiaDestino = readlineAspas();
 
-        //pesoCaminho = Dijkstra(listaAdj, tamAtual, nomeTecnologiaOrigem, nomeTecnologiaDestino, regCab);
-        
-        printf("tamAtual: %d\n", tamAtual);
-        printf("regCab.nroTecnologias: %d\n", regCab.nroTecnologias);
-        for(int i = 0; i < regCab.nroTecnologias - 1; i++){
-            printf("listaAdj[%d]->tecnologiaOrigem: %s\n", i, listaAdj[i].tecnologiaOrigem);
-        }
+        pesoCaminho = Dijkstra(listaAdj, tamAtual, nomeTecnologiaOrigem, nomeTecnologiaDestino, regCab);
 
         if(pesoCaminho == -1)
-            printf("%s %s: CAMINHO INEXISTENTE\n", nomeTecnologiaOrigem, nomeTecnologiaDestino);
+            printf("%s %s: CAMINHO INEXISTENTE.\n", nomeTecnologiaOrigem, nomeTecnologiaDestino);
         else
             printf("%s %s: %d\n", nomeTecnologiaOrigem, nomeTecnologiaDestino, pesoCaminho);
 

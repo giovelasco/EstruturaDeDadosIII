@@ -9,7 +9,7 @@ typedef struct noAresta_t noAresta;
 
 struct noAresta_t{
     int peso;
-    char *tecnologiaDestino;
+    char *nomeTecnologia;
     noAresta *prox;  
 };
 
@@ -35,4 +35,4 @@ void DestroiListaArestas(listaArestas *lista);
  * @param l ponteiro para lista encadeada
  * @param aInserir string a ser inserida
 */
-int InsereAresta(listaArestas *lista, int peso, char *tecnologiaDestino);
+int AdicionaAresta(listaArestas *lista, int peso, char *nomeTecnologia);

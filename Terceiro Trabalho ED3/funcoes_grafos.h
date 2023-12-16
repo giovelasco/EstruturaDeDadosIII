@@ -8,17 +8,19 @@ Nome: Giovanna de Freitas Velasco - NUSP: 13676346
 typedef struct{
     int grauEntrada;
     int grauSaida;
-    char *tecnologiaOrigem;
+    char *nomeTecnologia;
     int grupo;
     listaArestas *listaLinear;
-} noVertices;
+} noVertice;
 
-int BuscaBinaria(noVertices *listaAdj, int inicio, int fim, char *nomeBuscado, int *posInsercao);
+int BuscaBinaria(noVertice *listaAdj, int inicio, int fim, char *nomeBuscado, int *posInsercao);
 
-void GeraGrafo(FILE *bin, noVertices *listaAdj, int *tamAtual, int tipoGrafo);
+void GeraGrafo(FILE *bin, noVertice *listaAdj, int *tamAtual, int tipoGrafo);
 
-void InsereNoGrafo(noVertices *listaAdj, int *tamAtual, char *tecnologiaOrigem, int peso, int grupo, char *tecnologiaDestino, int transp);
+void InsereNoGrafo(noVertice *listaAdj, int *tamAtual, char *tecnologiaOrigem, int peso, int grupo, char *tecnologiaDestino);
 
-void ImprimeGrafo(noVertices *listaAdj, int tamAtual);
+void InsereNoGrafoTransposto(noVertice *listaAdj, int *tamAtual, char *tecnologiaOrigem, int peso, int grupo, char *tecnologiaDestino);
 
-void DestroiGrafo(noVertices *listaAdj, int tamAtual);
+void ImprimeGrafo(noVertice *listaAdj, int tamAtual);
+
+void DestroiGrafo(noVertice *listaAdj, int tamAtual);
