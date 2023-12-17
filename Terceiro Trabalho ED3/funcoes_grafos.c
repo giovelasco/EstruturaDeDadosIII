@@ -18,7 +18,7 @@ void ImprimeGrafo(noVertice *listaAdj, int tamAtual){
             printf("%d ", listaAdj[i].grupo);
             printf("%d ", listaAdj[i].grauEntrada);
             printf("%d ", listaAdj[i].grauSaida);
-            printf("%d ", listaAdj[i].grauEntrada + listaAdj[i].grauSaida);
+            printf("%d ", listaAdj[i].grau);
             printf("%s ", noAtual->nomeTecnologia);
             printf("%d", noAtual->peso);
             printf("\n");
@@ -65,6 +65,7 @@ void AdicionaVertice(noVertice *listaAdj, int *tamAtual, int posInsercao, char *
     // instancia as informações do vértice
     listaAdj[posInsercao].grauEntrada = 0;
     listaAdj[posInsercao].grauSaida = 0;
+    listaAdj[posInsercao].grau = 0;
     strcpy(listaAdj[posInsercao].nomeTecnologia, nomeTecnologia);
     listaAdj[posInsercao].grupo = -1;
     listaAdj[posInsercao].listaLinear = CriaListaArestas();
@@ -88,6 +89,7 @@ void InsereNoGrafo(noVertice *listaAdj, int *tamAtual, char *tecnologiaOrigem, i
     // caso exista tecnologiaDestino, adiciona-se a aresta na lista linear do vértice correspondente
     if(AdicionaAresta(listaAdj[posTecnologiaOrigem].listaLinear, peso, tecnologiaDestino) == 1){ 
         listaAdj[posTecnologiaOrigem].grauSaida++; // atualiza grau de saída do vértice origem
+        listaAdj[posTecnologiaOrigem].grau++;
 
         // para atualizar o grau de entrada da tecnologiaDestino, realiza-se busca binária no vetor de vértices
         int posTecnologiaDestino = BuscaBinaria(listaAdj, 0, (*tamAtual) - 1, tecnologiaDestino, &posInsercao);
@@ -99,6 +101,7 @@ void InsereNoGrafo(noVertice *listaAdj, int *tamAtual, char *tecnologiaOrigem, i
         }
 
         listaAdj[posTecnologiaDestino].grauEntrada++; // atualiza o grau de entrada do vértice destino
+        listaAdj[posTecnologiaDestino].grau++;
     }
 }
 
@@ -117,6 +120,7 @@ void InsereNoGrafoTransposto(noVertice *listaAdj, int *tamAtual, char *tecnologi
 
     if(strcmp(tecnologiaDestino, "\0") != 0){
         listaAdj[posTecnologiaOrigem].grauEntrada++; // atualiza o grau de entrada do vértice origem
+        listaAdj[posTecnologiaOrigem].grau++;
 
         int posTecnologiaDestino = BuscaBinaria(listaAdj, 0, (*tamAtual) - 1, tecnologiaDestino, &posInsercao);
 
@@ -129,6 +133,7 @@ void InsereNoGrafoTransposto(noVertice *listaAdj, int *tamAtual, char *tecnologi
         AdicionaAresta(listaAdj[posTecnologiaDestino].listaLinear, peso, tecnologiaOrigem); // adiciona a aresta correspondente
 
         listaAdj[posTecnologiaDestino].grauSaida++; // atualiza o grau de saída do vértice destino
+        listaAdj[posTecnologiaDestino].grau++;
     }
 }
 

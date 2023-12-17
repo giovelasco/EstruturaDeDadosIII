@@ -10,6 +10,7 @@ Nome: Giovanna de Freitas Velasco - NUSP: 13676346
 typedef struct{
     int grauEntrada;
     int grauSaida;
+    int grau;
     char *nomeTecnologia;
     int grupo;
     listaArestas *listaLinear;
