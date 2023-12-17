@@ -68,7 +68,7 @@ void AdicionaVertice(noVertice *listaAdj, int *tamAtual, int posInsercao, char *
     listaAdj[posInsercao].grau = 0;
     strcpy(listaAdj[posInsercao].nomeTecnologia, nomeTecnologia);
     listaAdj[posInsercao].grupo = -1;
-    listaAdj[posInsercao].listaLinear = CriaListaArestas();
+    listaAdj[posInsercao].listaLinear = CriaLista();
 
     (*tamAtual)++;
 }
@@ -87,7 +87,7 @@ void InsereNoGrafo(noVertice *listaAdj, int *tamAtual, char *tecnologiaOrigem, i
     if(listaAdj[posTecnologiaOrigem].grupo == -1) listaAdj[posTecnologiaOrigem].grupo = grupo; // caso o grupo seja NULO, o atualiza
 
     // caso exista tecnologiaDestino, adiciona-se a aresta na lista linear do vértice correspondente
-    if(AdicionaAresta(listaAdj[posTecnologiaOrigem].listaLinear, peso, tecnologiaDestino) == 1){ 
+    if(AdicionaElemento(listaAdj[posTecnologiaOrigem].listaLinear, peso, tecnologiaDestino) == 1){ 
         listaAdj[posTecnologiaOrigem].grauSaida++; // atualiza grau de saída do vértice origem
         listaAdj[posTecnologiaOrigem].grau++;
 
@@ -130,7 +130,7 @@ void InsereNoGrafoTransposto(noVertice *listaAdj, int *tamAtual, char *tecnologi
             posTecnologiaDestino = posInsercao;
         }
 
-        AdicionaAresta(listaAdj[posTecnologiaDestino].listaLinear, peso, tecnologiaOrigem); // adiciona a aresta correspondente
+        AdicionaElemento(listaAdj[posTecnologiaDestino].listaLinear, peso, tecnologiaOrigem); // adiciona a aresta correspondente
 
         listaAdj[posTecnologiaDestino].grauSaida++; // atualiza o grau de saída do vértice destino
         listaAdj[posTecnologiaDestino].grau++;
@@ -175,7 +175,7 @@ void GeraGrafo(FILE *bin, noVertice *listaAdj, int *tamAtual, int tipoGrafo){
 void DestroiGrafo(noVertice *listaAdj, int tamAtual){
     for(int i = 0; i < tamAtual; i++){
         free(listaAdj[i].nomeTecnologia);
-        DestroiListaArestas(listaAdj[i].listaLinear);
+        DestroiLista(listaAdj[i].listaLinear);
     }
     free(listaAdj);
 }
@@ -241,9 +241,9 @@ int Dijkstra(noVertice *listaAdj, int tamAtual, char *nomeTecnologiaOrigem, char
     int posInsercao;
     int posOrigem = BuscaBinaria(listaAdj, 0, regCab.nroTecnologias, nomeTecnologiaOrigem, &posInsercao);
 
-    AdicionaElemento(&verticesPercorridos, posOrigem);
+    AdicionaElementoConjunto(&verticesPercorridos, posOrigem);
     for(int i = 0; i < regCab.nroTecnologias; i++){
-        AdicionaElemento(&todosVertices, i);
+        AdicionaElementoConjunto(&todosVertices, i);
         vetorDistancias[i] = INT_MAX; 
     } 
     vetorDistancias[posOrigem] = 0; // a distância da origem em relação a si mesma é igual a zero
@@ -275,7 +275,7 @@ int Dijkstra(noVertice *listaAdj, int tamAtual, char *nomeTecnologiaOrigem, char
             }
         }
 
-        AdicionaElemento(&verticesPercorridos, verticesAPercorrer.elementos[posMinima]); // adiciona o vértice a ser analisado na iteração
+        AdicionaElementoConjunto(&verticesPercorridos, verticesAPercorrer.elementos[posMinima]); // adiciona o vértice a ser analisado na iteração
 
         noAtual = listaAdj[verticesAPercorrer.elementos[posMinima]].listaLinear->ini;
         for(int i = 0; i < listaAdj[verticesAPercorrer.elementos[posMinima]].grauSaida; i++){

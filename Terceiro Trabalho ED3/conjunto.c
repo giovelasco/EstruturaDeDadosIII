@@ -23,7 +23,7 @@ int EstaNoConjunto(conjunto *c, int elemento){
     return 0; //se não estiver no conjunto, retorna 0
 }
 
-void AdicionaElemento(conjunto *c, int elemento){
+void AdicionaElementoConjunto(conjunto *c, int elemento){
     // pelas propriedades de conjuntos, não se pode inserir um elemento que já está no conjunto
     if(!EstaNoConjunto(c, elemento)){
 
@@ -45,7 +45,7 @@ conjunto DiferencaConjuntos(conjunto *c1, conjunto *c2){
     // se o elemento está no conjunto c1 e não está no conjunto c2, ele é adicionado ao conjunto da diferença
     for(int i = 0; i < c1->size; i++){
         if(!EstaNoConjunto(c2, c1->elementos[i]))
-            AdicionaElemento(&diferenca, c1->elementos[i]);
+            AdicionaElementoConjunto(&diferenca, c1->elementos[i]);
     }
  
     return diferenca; // retorna o conjunto c1 - c2

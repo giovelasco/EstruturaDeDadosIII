@@ -8,7 +8,7 @@ Nome: Giovanna de Freitas Velasco - NUSP: 13676346
 #include <string.h>
 #include "lista_encadeada.h"
 
-listaArestas *CriaListaArestas(){
+listaArestas *CriaLista(){
     listaArestas *lista;
     lista = (listaArestas *) malloc(sizeof(listaArestas));
 
@@ -18,22 +18,7 @@ listaArestas *CriaListaArestas(){
     return lista;
 }
 
-void DestroiListaArestas(listaArestas *lista){
-    if(lista != NULL){
-        noAresta *noAtual = lista->ini;
-
-        while(noAtual != NULL){ // percorre toda a lista, liberando a memória alocada em cada nó
-            lista->ini = noAtual->prox;
-            free(noAtual->nomeTecnologia); 
-            free(noAtual);
-            noAtual = lista->ini;
-        }
-    }
-
-    free(lista);
-}
-
-int AdicionaAresta(listaArestas *lista, int peso, char *nomeTecnologia){
+int AdicionaElemento(listaArestas *lista, int peso, char *nomeTecnologia){
     // trata os casos em que nomeTecnologiaDestino é NULO
     if(strlen(nomeTecnologia) == 0) return 0; // retorna que não há aresta
 
@@ -62,4 +47,20 @@ int AdicionaAresta(listaArestas *lista, int peso, char *nomeTecnologia){
     aux->prox = novoNo;
 
     return 1; // retorna que a aresta foi inserida
+}
+
+
+void DestroiLista(listaArestas *lista){
+    if(lista != NULL){
+        noAresta *noAtual = lista->ini;
+
+        while(noAtual != NULL){ // percorre toda a lista, liberando a memória alocada em cada nó
+            lista->ini = noAtual->prox;
+            free(noAtual->nomeTecnologia); 
+            free(noAtual);
+            noAtual = lista->ini;
+        }
+    }
+
+    free(lista);
 }

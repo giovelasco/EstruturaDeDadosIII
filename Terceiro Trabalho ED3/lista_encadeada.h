@@ -22,17 +22,17 @@ typedef struct listaArestas_t{
  * Cria uma lista encadeada.
  * @returns ponteiro para a lista
 */
-listaArestas *CriaListaArestas();
-
-/**
- * Desaloca a memória de cada nó de uma lista encadeada.
- * @param l ponteiro para lista encadeada
-*/
-void DestroiListaArestas(listaArestas *lista);
+listaArestas *CriaLista();
 
 /**
  * Insere ordenandamente um elemento em uma lista encadeada.
  * @param l ponteiro para lista encadeada
  * @param aInserir string a ser inserida
 */
-int AdicionaAresta(listaArestas *lista, int peso, char *nomeTecnologia);
+int AdicionaElemento(listaArestas *lista, int peso, char *nomeTecnologia);
+
+/**
+ * Desaloca a memória de cada nó de uma lista encadeada.
+ * @param l ponteiro para lista encadeada
+*/
+void DestroiLista(listaArestas *lista);
