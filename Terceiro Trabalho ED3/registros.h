@@ -40,14 +40,6 @@ typedef struct{
 } registroDados;
 
 /**
- * Lê o registro de cabeçalho de um arquivo binário.
- * @param bin ponteiro para o arquivo binário
- * @param cabDados ponteiro para struct do tipo registro de cabeçalho
-*/
-void LeCabecalhoDados(FILE *bin, cabecalhoDados *cabDados);
-
-
-/**
  * Lê o registro de dados de um arquivo binário.
  * @param bin ponteiro para o arquivo binário
  * @param regDados ponteiro para struct do tipo registro de dados

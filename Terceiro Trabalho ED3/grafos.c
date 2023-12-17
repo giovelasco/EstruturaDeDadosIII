@@ -52,157 +52,11 @@ void DestroiGrafo(grafo *g){
     free(g); // libera o ponteiro para o grafo
 }
 
-
-
-int BuscaBinaria(noVertice *listaAdj, int inicio, int fim, char *nomeBuscado, int *posInsercao){
-    // caso o início seja maior que o fim, a busca não encontrou o elemento e retorna a posição correta para inserção
-    if(inicio > fim){
-        *posInsercao = inicio;
-        return -1;
-    }
-    else{
-        int meio = (inicio + fim) / 2;
-        int valorRetorno = strcmp(nomeBuscado, listaAdj[meio].nomeTecnologia);
-
-        // se o valor foi encontrado, retorna a posição correta para manipulação
-        if(valorRetorno == 0) 
-            return meio;
-        
-        // se o valor não foi encontrado, chama a função de busca binária recursivamente
-        else{
-            if(valorRetorno < 0)
-                return BuscaBinaria(listaAdj, inicio, meio - 1, nomeBuscado, posInsercao);
-            else
-                return BuscaBinaria(listaAdj, meio + 1, fim, nomeBuscado, posInsercao);
-        }
-    }
-}
-
-void AdicionaVertice(noVertice *listaAdj, int *tamAtual, int posInsercao, char *nomeTecnologia){
-    // desloca os elementos de posições subsequentes à posição a inserir
-    for(int i = (*tamAtual) - 1; i >= posInsercao; i--)
-        listaAdj[i + 1] = listaAdj[i];
-    
-    // aloca espaço de memória para o nome do vértice
-    listaAdj[posInsercao].nomeTecnologia = (char *) malloc((strlen(nomeTecnologia) + 1) * sizeof(char));
-    listaAdj[posInsercao].nomeTecnologia[strlen(nomeTecnologia)] = '\0';
-
-    // instancia as informações do vértice
-    listaAdj[posInsercao].grauEntrada = 0;
-    listaAdj[posInsercao].grauSaida = 0;
-    listaAdj[posInsercao].grau = 0;
-    strcpy(listaAdj[posInsercao].nomeTecnologia, nomeTecnologia);
-    listaAdj[posInsercao].grupo = -1;
-    listaAdj[posInsercao].listaLinear = CriaLista();
-
-    (*tamAtual)++;
-}
-
-void InsereNoGrafo(noVertice *listaAdj, int *tamAtual, char *tecnologiaOrigem, int peso, int grupo, char *tecnologiaDestino){
-    // realiza busca binária no vetor de vértices, verificando a existência do vértice
-    int posInsercao;
-    int posTecnologiaOrigem = BuscaBinaria(listaAdj, 0, (*tamAtual) - 1, tecnologiaOrigem, &posInsercao);
-
-    // caso o vértice não exista, adiciona-se ele ao vetor de vértices  
-    if(posTecnologiaOrigem == -1){ 
-        AdicionaVertice(listaAdj, tamAtual, posInsercao, tecnologiaOrigem);
-        posTecnologiaOrigem = posInsercao;
-    }
-    
-    if(listaAdj[posTecnologiaOrigem].grupo == -1) listaAdj[posTecnologiaOrigem].grupo = grupo; // caso o grupo seja NULO, o atualiza
-
-    // caso exista tecnologiaDestino, adiciona-se a aresta na lista linear do vértice correspondente
-    if(AdicionaElemento(listaAdj[posTecnologiaOrigem].listaLinear, peso, tecnologiaDestino) == 1){ 
-        listaAdj[posTecnologiaOrigem].grauSaida++; // atualiza grau de saída do vértice origem
-        listaAdj[posTecnologiaOrigem].grau++;
-
-        // para atualizar o grau de entrada da tecnologiaDestino, realiza-se busca binária no vetor de vértices
-        int posTecnologiaDestino = BuscaBinaria(listaAdj, 0, (*tamAtual) - 1, tecnologiaDestino, &posInsercao);
-
-        // caso o vértice não exista, adiciona-se ele ao vetor de vértices 
-        if(posTecnologiaDestino == -1){
-            AdicionaVertice(listaAdj, tamAtual, posInsercao, tecnologiaDestino);
-            posTecnologiaDestino = posInsercao;
-        }
-
-        listaAdj[posTecnologiaDestino].grauEntrada++; // atualiza o grau de entrada do vértice destino
-        listaAdj[posTecnologiaDestino].grau++;
-    }
-}
-
-void InsereNoGrafoTransposto(noVertice *listaAdj, int *tamAtual, char *tecnologiaOrigem, int peso, int grupo, char *tecnologiaDestino){
-    // realizamos busca binária no vetor de vértices, verificando a existência do vértice
-    int posInsercao;
-    int posTecnologiaOrigem = BuscaBinaria(listaAdj, 0, (*tamAtual - 1), tecnologiaOrigem, &posInsercao);
-
-    // caso o vértice não exista, adiciona-se ele ao vetor de vértices 
-    if(posTecnologiaOrigem == -1){
-        AdicionaVertice(listaAdj, tamAtual, posInsercao, tecnologiaOrigem);
-        posTecnologiaOrigem = posInsercao;
-    }
-
-    if(listaAdj[posTecnologiaOrigem].grupo == -1) listaAdj[posTecnologiaOrigem].grupo = grupo; // caso o grupo seja NULO, o atualiza
-
-    if(strcmp(tecnologiaDestino, "\0") != 0){
-        listaAdj[posTecnologiaOrigem].grauEntrada++; // atualiza o grau de entrada do vértice origem
-        listaAdj[posTecnologiaOrigem].grau++;
-
-        int posTecnologiaDestino = BuscaBinaria(listaAdj, 0, (*tamAtual) - 1, tecnologiaDestino, &posInsercao);
-
-        // caso o vértice não exista, inserimos ele no vetor de vértices
-        if(posTecnologiaDestino == -1){
-            AdicionaVertice(listaAdj, tamAtual, posInsercao, tecnologiaDestino);
-            posTecnologiaDestino = posInsercao;
-        }
-
-        AdicionaElemento(listaAdj[posTecnologiaDestino].listaLinear, peso, tecnologiaOrigem); // adiciona a aresta correspondente
-
-        listaAdj[posTecnologiaDestino].grauSaida++; // atualiza o grau de saída do vértice destino
-        listaAdj[posTecnologiaDestino].grau++;
-    }
-}
-
-void GeraGrafo(FILE *bin, noVertice *listaAdj, int *tamAtual, int tipoGrafo){
-    registroDados regDados;
-
-    // inicio da leitura dos registros de dados 
-    while(fread(&(regDados.removido), sizeof(char), 1, bin) != 0){
-        if(regDados.removido == '1') // caso o registro tenha sido removida, pula-se para o próximo registro
-            fseek(bin, TAM_REGISTRO - 1, SEEK_CUR);
-
-        else{ // caso o registro exista, lê-se o registro
-            LeRegistroDados(bin, &regDados);
-            
-            if(regDados.grupo != -1){ // evitamos casos em que grupo é NULO
-                switch(tipoGrafo){
-                    case 0: // gera o grafo normal
-                        InsereNoGrafo(listaAdj, tamAtual, regDados.TecnologiaOrigem.nome, regDados.peso, regDados.grupo, 
-                                regDados.TecnologiaDestino.nome);
-                        break;
-                    
-                    case 1: // gera o grafo transposto
-                        InsereNoGrafoTransposto(listaAdj, tamAtual, regDados.TecnologiaOrigem.nome, regDados.peso, regDados.grupo, 
-                                regDados.TecnologiaDestino.nome);
-                        break;
-                }
-            }
-
-            int tamLixo = TAM_REGISTRO - (regDados.TecnologiaOrigem.tamanho + regDados.TecnologiaDestino.tamanho) * (sizeof(char)) - TAM_REGISTRO_FIXO;
-
-            free(regDados.TecnologiaOrigem.nome);
-            free(regDados.TecnologiaDestino.nome);
-
-            fseek(bin, tamLixo, SEEK_CUR);
-        }
-    }
-}
-
-
 /*
     Esta implementação de busca considera uma busca binária iterativa. A opção para iteravidade sobre a recursividade é 
 escolhida para que não haja estouro de pilha em casos de grafos com muitos vértices.
 */
-int BuscaBinaria2(grafo *grafo, char *nomeBuscado, int *posInsercao) {
+int BuscaVertice(grafo *grafo, char *nomeBuscado, int *posInsercao) {
     int inicio = 0;
     int fim = grafo->numVertices - 1;
 
@@ -228,7 +82,7 @@ int BuscaBinaria2(grafo *grafo, char *nomeBuscado, int *posInsercao) {
 }
 
 
-void AdicionaVertice2(grafo *grafo, int posInsercao, char *nomeTecnologia){
+void AdicionaVertice(grafo *grafo, int posInsercao, char *nomeTecnologia){
     // desloca os elementos de posições subsequentes à posição a inserir
     for(int i = (grafo->numVertices) - 1; i >= posInsercao; i--)
         grafo->listaAdj[i + 1] = grafo->listaAdj[i];
@@ -249,14 +103,14 @@ void AdicionaVertice2(grafo *grafo, int posInsercao, char *nomeTecnologia){
 }
 
 
-void InsereNoGrafo2(grafo *grafo, char *tecnologiaOrigem, int peso, int grupo, char *tecnologiaDestino){
+void InsereNoGrafo(grafo *grafo, char *tecnologiaOrigem, int peso, int grupo, char *tecnologiaDestino){
     // realiza busca binária no vetor de vértices, verificando a existência do vértice
     int posInsercao;
-    int posTecnologiaOrigem = BuscaBinaria2(grafo, tecnologiaOrigem, &posInsercao);
+    int posTecnologiaOrigem = BuscaVertice(grafo, tecnologiaOrigem, &posInsercao);
 
     // caso o vértice não exista, adiciona-se ele ao vetor de vértices  
     if(posTecnologiaOrigem == -1){ 
-        AdicionaVertice2(grafo, posInsercao, tecnologiaOrigem);
+        AdicionaVertice(grafo, posInsercao, tecnologiaOrigem);
         posTecnologiaOrigem = posInsercao;
     }
     
@@ -269,11 +123,11 @@ void InsereNoGrafo2(grafo *grafo, char *tecnologiaOrigem, int peso, int grupo, c
         grafo->listaAdj[posTecnologiaOrigem].grau++;
 
         // para atualizar o grau de entrada da tecnologiaDestino, realiza-se busca binária no vetor de vértices
-        int posTecnologiaDestino = BuscaBinaria2(grafo, tecnologiaDestino, &posInsercao);
+        int posTecnologiaDestino = BuscaVertice(grafo, tecnologiaDestino, &posInsercao);
 
         // caso o vértice não exista, adiciona-se ele ao vetor de vértices 
         if(posTecnologiaDestino == -1){
-            AdicionaVertice2(grafo, posInsercao, tecnologiaDestino);
+            AdicionaVertice(grafo, posInsercao, tecnologiaDestino);
             posTecnologiaDestino = posInsercao;
         }
 
@@ -282,7 +136,7 @@ void InsereNoGrafo2(grafo *grafo, char *tecnologiaOrigem, int peso, int grupo, c
     }
 }
 
-void GeraGrafo2(FILE *bin, grafo *grafo){
+void GeraGrafo(FILE *bin, grafo *grafo){
     registroDados regDados;
 
     // inicio da leitura dos registros de dados 
@@ -294,7 +148,7 @@ void GeraGrafo2(FILE *bin, grafo *grafo){
             LeRegistroDados(bin, &regDados);
             
             if(regDados.grupo != -1) // evitamos casos em que grupo é NULO
-                InsereNoGrafo2(grafo, regDados.TecnologiaOrigem.nome, regDados.peso, regDados.grupo, regDados.TecnologiaDestino.nome);
+                InsereNoGrafo(grafo, regDados.TecnologiaOrigem.nome, regDados.peso, regDados.grupo, regDados.TecnologiaDestino.nome);
 
             int tamLixo = (TAM_REGISTRO - TAM_REGISTRO_FIXO) - (regDados.TecnologiaOrigem.tamanho + regDados.TecnologiaDestino.tamanho);
 
@@ -310,7 +164,7 @@ grafo *GrafoTransposto(const grafo *grafoOriginal){
     grafo *grafoTransposto = CriaGrafo(grafoOriginal->numVertices);
     
     for(int i = 0; i < grafoOriginal->numVertices; i++){
-        AdicionaVertice2(grafoTransposto, i, grafoOriginal->listaAdj[i].nomeTecnologia);
+        AdicionaVertice(grafoTransposto, i, grafoOriginal->listaAdj[i].nomeTecnologia);
         grafoTransposto->listaAdj[i].grauEntrada = grafoOriginal->listaAdj[i].grauSaida;
         grafoTransposto->listaAdj[i].grauSaida = grafoOriginal->listaAdj[i].grauEntrada;
         grafoTransposto->listaAdj[i].grau = grafoOriginal->listaAdj[i].grau;
@@ -321,7 +175,7 @@ grafo *GrafoTransposto(const grafo *grafoOriginal){
     for(int i = 0; i < grafoOriginal->numVertices; i++){
         noAresta *noAtual = grafoOriginal->listaAdj[i].listaLinear->ini;
         while(noAtual != NULL){
-            posTecnologiaOrigem = BuscaBinaria2(grafoTransposto, noAtual->nomeTecnologia, &posInsercao);
+            posTecnologiaOrigem = BuscaVertice(grafoTransposto, noAtual->nomeTecnologia, &posInsercao);
             AdicionaElemento(grafoTransposto->listaAdj[posTecnologiaOrigem].listaLinear, noAtual->peso, grafoOriginal->listaAdj[i].nomeTecnologia);
 
             noAtual = noAtual->prox;
@@ -338,7 +192,7 @@ void BuscaEmProfundidade(grafo *grafo, int verticeAtual, int *verticesVisitados,
 
     noAresta *arestaAtual = grafo->listaAdj[verticeAtual].listaLinear->ini;
     while(arestaAtual != NULL){
-        int verticeSucessor = BuscaBinaria2(grafo, arestaAtual->nomeTecnologia, &posInsercao);
+        int verticeSucessor = BuscaVertice(grafo, arestaAtual->nomeTecnologia, &posInsercao);
         if(verticesVisitados[verticeSucessor] == 0){
             BuscaEmProfundidade(grafo, verticeSucessor, verticesVisitados, pilhaDaBusca);
         }
@@ -390,7 +244,7 @@ int Dijkstra(grafo *grafo, char *nomeTecnologiaOrigem, char *nomeTecnologiaDesti
     CriaConjunto(&todosVertices);
 
     int posInsercao;
-    int posOrigem = BuscaBinaria2(grafo, nomeTecnologiaOrigem, &posInsercao);
+    int posOrigem = BuscaVertice(grafo, nomeTecnologiaOrigem, &posInsercao);
 
     // adiciona a posição de origem no conjunto de vértices percorridos
     AdicionaElementoConjunto(&verticesPercorridos, posOrigem);
@@ -407,7 +261,7 @@ int Dijkstra(grafo *grafo, char *nomeTecnologiaOrigem, char *nomeTecnologiaDesti
     // para a primeira iteração, adiciona os pesos de cada vértice adjacente à origem no vetor de distâncias
     noAresta *noAtual = grafo->listaAdj[posOrigem].listaLinear->ini;
     for(int i = 0; i < grafo->listaAdj[posOrigem].grauSaida; i++){
-        int posDestino = BuscaBinaria2(grafo, noAtual->nomeTecnologia, &posInsercao);
+        int posDestino = BuscaVertice(grafo, noAtual->nomeTecnologia, &posInsercao);
         vetorDistancias[posDestino] = noAtual->peso;
 
         noAtual = noAtual->prox;
@@ -437,7 +291,7 @@ int Dijkstra(grafo *grafo, char *nomeTecnologiaOrigem, char *nomeTecnologiaDesti
         // faz as comparações no vetor de distâncias, colocando a menor distância nas posições corretas
         noAtual = grafo->listaAdj[verticesAPercorrer.elementos[posMinima]].listaLinear->ini;
         for(int i = 0; i < grafo->listaAdj[verticesAPercorrer.elementos[posMinima]].grauSaida; i++){
-            int posDestino = BuscaBinaria2(grafo, noAtual->nomeTecnologia, &posInsercao);
+            int posDestino = BuscaVertice(grafo, noAtual->nomeTecnologia, &posInsercao);
             if(vetorDistancias[verticesAPercorrer.elementos[posMinima]] + noAtual->peso < vetorDistancias[posDestino])
                 vetorDistancias[posDestino] = vetorDistancias[verticesAPercorrer.elementos[posMinima]] + noAtual->peso;
 
@@ -452,6 +306,6 @@ int Dijkstra(grafo *grafo, char *nomeTecnologiaOrigem, char *nomeTecnologiaDesti
     DestroiConjunto(&todosVertices);
     DestroiConjunto(&verticesAPercorrer);
 
-    int posDesejada = BuscaBinaria2(grafo, nomeTecnologiaDestino, &posInsercao);
+    int posDesejada = BuscaVertice(grafo, nomeTecnologiaDestino, &posInsercao);
     return (vetorDistancias[posDesejada] == INT_MAX) ? -1 : vetorDistancias[posDesejada];
 }

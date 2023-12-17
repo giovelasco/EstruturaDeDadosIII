@@ -23,23 +23,15 @@ typedef struct{
 
 grafo *CriaGrafo(int tamLista);
 
-int BuscaBinaria(noVertice *listaAdj, int inicio, int fim, char *nomeBuscado, int *posInsercao);
-
-int BuscaBinaria2(grafo *grafo, char *nomeBuscado, int *posInsercao);
-
-void GeraGrafo(FILE *bin, noVertice *listaAdj, int *tamAtual, int tipoGrafo);
-
-void GeraGrafo2(FILE *bin, grafo *grafo);
-
-grafo *GrafoTransposto(const grafo *grafoOriginal);
-
-void InsereNoGrafo(noVertice *listaAdj, int *tamAtual, char *tecnologiaOrigem, int peso, int grupo, char *tecnologiaDestino);
-
-void InsereNoGrafoTransposto(noVertice *listaAdj, int *tamAtual, char *tecnologiaOrigem, int peso, int grupo, char *tecnologiaDestino);
-
 void ImprimeGrafo(grafo *g);
 
 void DestroiGrafo(grafo *g);
+
+int BuscaVertice(grafo *grafo, char *nomeBuscado, int *posInsercao);
+
+void GeraGrafo(FILE *bin, grafo *grafo);
+
+grafo *GrafoTransposto(const grafo *grafoOriginal);
 
 int ContaComponentesFortementeConexos(grafo *grafoOriginal, grafo *grafoTransposto);
 

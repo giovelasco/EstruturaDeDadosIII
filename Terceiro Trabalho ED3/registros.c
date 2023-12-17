@@ -8,13 +8,6 @@ Nome: Giovanna de Freitas Velasco - NUSP: 13676346
 #include <string.h>
 #include "registros.h"
 
-void LeCabecalhoDados(FILE *bin, cabecalhoDados *cabDados){
-    fread(&(cabDados->status), sizeof(char), 1, bin);
-    fread(&(cabDados->proxRRN), sizeof(int), 1, bin);
-    fread(&(cabDados->nroTecnologias), sizeof(int), 1, bin);
-    fread(&(cabDados->nroParesTecnologias), sizeof(int), 1, bin);
-}
-
 void LeRegistroDados(FILE *bin, registroDados *regDados){
     fread(&(regDados->grupo), sizeof(int), 1, bin);
     fread(&(regDados->popularidade), sizeof(int), 1, bin);

@@ -10,7 +10,7 @@ Nome: Giovanna de Freitas Velasco - NUSP: 13676346
 FILE *AbrirArquivo(FILE *arquivo, char *nomeArquivo, char *modoAbertura){
     arquivo = fopen(nomeArquivo, modoAbertura);
     if(arquivo == NULL){ // verifica se houveram falhas na abertura do arquivo
-        printf("Falha no processamento do arquivo.\n");
+        printf("Falha na execução da funcionalidade.\n");
         return NULL;
     }
 
@@ -18,7 +18,7 @@ FILE *AbrirArquivo(FILE *arquivo, char *nomeArquivo, char *modoAbertura){
     char status;
     fread(&status, 1, 1, arquivo);
     if(status == '0'){
-        printf("Falha no processamento do arquivo.");
+        printf("Falha na execução da funcionalidade.\n");
         fclose(arquivo);
         return NULL;
     }
