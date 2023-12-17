@@ -18,6 +18,7 @@ void Funcionalidade8(char *nomeDadosBIN){
     int nroTecnologias;
     fseek(bin, 5, SEEK_SET);
     fread(&nroTecnologias, 1, sizeof(int), bin);
+    fseek(bin, 4, SEEK_CUR);
 
     // lista de adjacências que forma o grafo
     int tamAtual = 0; 
@@ -41,6 +42,7 @@ void Funcionalidade9(char *nomeDadosBIN){
     int nroTecnologias;
     fseek(bin, 5, SEEK_SET);
     fread(&nroTecnologias, 1, sizeof(int), bin);
+    fseek(bin, 4, SEEK_CUR);
 
     // lista de adjacências que forma o grafo transposto
     int tamAtual = 0; 
@@ -64,6 +66,7 @@ void Funcionalidade10(char *nomeDadosBIN, int n){
     int nroTecnologias;
     fseek(bin, 5, SEEK_SET);
     fread(&nroTecnologias, 1, sizeof(int), bin);
+    fseek(bin, 4, SEEK_CUR);
 
     // lista de adjacências que forma o grafo transposto
     int tamAtual = 0; 
