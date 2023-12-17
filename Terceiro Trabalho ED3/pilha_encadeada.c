@@ -59,12 +59,14 @@ int DesempilhaElemento(pilha *p){
 }
 
 void DestroiPilha(pilha *p){
-    no *aux;
-    while(p->topo != NULL){ // para cada nó alocado, libera sua memória
-        aux = p->topo;
-        p->topo = p->topo->prox;
+    if(p != NULL){
+        no *aux;
+        while(p->topo != NULL){ // para cada nó alocado, libera sua memória
+            aux = p->topo;
+            p->topo = p->topo->prox;
 
-        free(aux);
+            free(aux);
+        }
     }
 
     free(p); // libera o ponteiro da pilha
