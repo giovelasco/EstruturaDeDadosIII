@@ -180,6 +180,56 @@ void DestroiGrafo(noVertice *listaAdj, int tamAtual){
     free(listaAdj);
 }
 
+void BuscaEmProfundidade(noVertice *listaAdj, int verticeAtual, int *verticesVisitados, int numVertices, pilha *pilhaDaBusca){
+    int posInsercao;
+
+    verticesVisitados[verticeAtual] = 1;
+
+    noAresta *arestaAtual = listaAdj[verticeAtual].listaLinear->ini;
+    while(arestaAtual != NULL){
+        int verticeSucessor = BuscaBinaria(listaAdj, 0, numVertices, arestaAtual->nomeTecnologia, &posInsercao);
+        if(verticesVisitados[verticeSucessor] == 0){
+            BuscaEmProfundidade(listaAdj, verticeSucessor, verticesVisitados, numVertices, pilhaDaBusca);
+        }
+        arestaAtual = arestaAtual->prox;
+    }
+
+    EmpilhaElemento(pilhaDaBusca, verticeAtual);
+}
+
+int ContabilizaCompFortConexos(noVertice *listaAdj, noVertice *listaAdjTransposta, int numVertices){
+    int verticeAtual;
+    int verticesVisitados[numVertices];
+    pilha *pilhaDaBusca = CriaPilha();
+    pilha *pilhaCompConexos = CriaPilha();
+    
+    // coloca todos os vértices como não visitados
+    for(int i = 0; i < numVertices; i++) verticesVisitados[i] = 0;
+
+    for(int i = 0; i < numVertices; i++){
+        if(verticesVisitados[i] == 0) // caso o vértice não tenha sido visitado, realiza-se busca em profundidade
+            BuscaEmProfundidade(listaAdj, i, verticesVisitados, numVertices, pilhaDaBusca);
+    }
+    
+    
+    // coloca todos os vértices como não visitados
+    for(int i = 0; i < numVertices; i++) verticesVisitados[i] = 0;
+
+    int componentesConexos = 0;
+    while(EstaVazia(pilhaDaBusca) == 0){
+        verticeAtual = DesempilhaElemento(pilhaDaBusca);
+        if(verticesVisitados[verticeAtual] == 0){
+            componentesConexos++;
+            BuscaEmProfundidade(listaAdjTransposta, verticeAtual, verticesVisitados, numVertices, pilhaCompConexos);
+        }
+    }
+
+    DestroiPilha(pilhaDaBusca);
+    DestroiPilha(pilhaCompConexos);
+
+    return componentesConexos;
+}
+
 int Dijkstra(noVertice *listaAdj, int tamAtual, char *nomeTecnologiaOrigem, char *nomeTecnologiaDestino, cabecalhoDados regCab){
     int vetorDistancias[regCab.nroTecnologias]; // D
     conjunto verticesPercorridos; // S
