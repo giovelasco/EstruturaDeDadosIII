@@ -14,7 +14,17 @@ FILE *AbrirArquivo(FILE *arquivo, char *nomeArquivo, char *modoAbertura){
         printf("Falha no processamento do arquivo.\n");
         return NULL;
     }
+
+    char status;
+    fread(&status, 1, 1, arquivo);
     
+    // verifica se o arquivo está consistente
+    if(status == '0'){
+        printf("Falha no processamento do arquivo.");
+        fclose(arquivo);
+        return;
+    }
+
     return arquivo;
 }
 

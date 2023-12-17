@@ -4,6 +4,8 @@ Nome: Giovanna de Freitas Velasco - NUSP: 13676346
 */
 
 #include "lista_encadeada.h"
+#include "conjunto.h"
+#include "pilha_encadeada.h"
 
 typedef struct{
     int grauEntrada;

@@ -6,31 +6,7 @@ Nome: Giovanna de Freitas Velasco - NUSP: 13676346
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "buscas_grafo.h"
 #include "conjunto.h"
-
-#define BRANCO 0
-#define CINZA 1
-#define PRETO 2
-
-
-void IniciaElemDeBusca(elemDeBusca *elementos, int tamAtual){
-    elementos->tempoDescoberta = (int *) malloc( tamAtual * sizeof(int));
-    elementos->tempoTermino = (int *) malloc( tamAtual * sizeof(int));
-    elementos->cores = (int *) malloc( tamAtual * sizeof(int));
-    elementos->antecessor = (short *) malloc( tamAtual * sizeof(short));
-    elementos->verticesRestantes = (int *) malloc( tamAtual * sizeof(int));
-
-    elementos->numRestantes = tamAtual;
-}
-
-void DestroiElemDeBusca(elemDeBusca *elementos){
-    free(elementos->tempoDescoberta);
-    free(elementos->tempoTermino);
-    free(elementos->cores);
-    free(elementos->verticesRestantes);
-    free(elementos->antecessor);
-}
 
 
 void BuscaRecursiva(int posVerticeAtual, noVertice *listaAdj, int tamAtual, int *tempo,  elemDeBusca *temposBusca){
