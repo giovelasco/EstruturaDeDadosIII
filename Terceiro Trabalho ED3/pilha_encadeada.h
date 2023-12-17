@@ -26,4 +26,6 @@ int EstaVazia(pilha *p);
 
 int DesempilhaElemento(pilha *p);
 
+void ImprimePilha(pilha *p);
+
 void DestroiPilha(pilha *p);

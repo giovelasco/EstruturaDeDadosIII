@@ -45,6 +45,14 @@ int DesempilhaElemento(pilha *p){
     return -1; // erro, a pilha está vazia
 }
 
+void ImprimePilha(pilha *p){
+    no *aux = p->topo;
+    for(int i = 0; i < p->tamPilha; i++){
+        printf("%d\n", aux->indiceTecnologia);
+        aux = aux->prox;
+    }
+}
+
 void DestroiPilha(pilha *p){
     no *aux;
     for(int i = 0; i < p->tamPilha; i++){

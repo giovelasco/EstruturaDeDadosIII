@@ -120,9 +120,6 @@ int ContabilizaCompFortConexos(noVertice *listaAdj, noVertice *listaAdjTranspost
     int verticesVisitados[numVertices];
     pilha *pilhaDaBusca = CriaPilha();
     pilha *pilhaCompConexos = CriaPilha();
-
-    int componentesConexos = 0;
-
     
     // coloca todos os vértices como não visitados
     for(int i = 0; i < numVertices; i++) verticesVisitados[i] = 0;
@@ -136,12 +133,12 @@ int ContabilizaCompFortConexos(noVertice *listaAdj, noVertice *listaAdjTranspost
     // coloca todos os vértices como não visitados
     for(int i = 0; i < numVertices; i++) verticesVisitados[i] = 0;
 
-    
+    int componentesConexos = 0;
     while(EstaVazia(pilhaDaBusca) == 0){
         verticeAtual = DesempilhaElemento(pilhaDaBusca);
         if(verticesVisitados[verticeAtual] == 0){
             componentesConexos++;
-            BuscaEmProfundidade(listaAdj, verticeAtual, verticesVisitados, numVertices, pilhaCompConexos);
+            BuscaEmProfundidade(listaAdjTransposta, verticeAtual, verticesVisitados, numVertices, pilhaCompConexos);
         }
     }
 
@@ -166,21 +163,22 @@ void Funcionalidade11(char *nomeDadosBIN){
     int tamAtualTransp = 0;
 
     noVertice *listaAdj = (noVertice *) malloc(regCab.nroTecnologias * (sizeof(noVertice)));
-    noVertice *listaAdjTranposta = (noVertice *) malloc(regCab.nroTecnologias * (sizeof(noVertice)));
+    noVertice *listaAdjTransposta = (noVertice *) malloc(regCab.nroTecnologias * (sizeof(noVertice)));
 
     GeraGrafo(bin, listaAdj, &tamAtual, 0);
-    GeraGrafo(bin, listaAdjTranposta, &tamAtualTransp, 1);
+    fseek(bin, 13, SEEK_SET);
+    GeraGrafo(bin, listaAdjTransposta, &tamAtualTransp, 1);
 
     // como o grafo transposto tem o mesmo número de vértices que o grafo, então tamAtual é igual a tamAtualTransp
-    int componentesConexos = ContabilizaCompFortConexos(listaAdj, listaAdjTranposta, tamAtual);
+    int componentesConexos = ContabilizaCompFortConexos(listaAdj, listaAdjTransposta, tamAtual);
 
     if(componentesConexos == 1)
-        printf("Sim, o grafo e fortemente conexo e possui %d componente.\n", componentesConexos);
+        printf("Sim, o grafo é fortemente conexo e possui %d componente.\n", componentesConexos);
     else
-        printf("Não, o grafo nao e fortemente conexo e possui %d componentes.\n", componentesConexos);
+        printf("Não, o grafo não é fortemente conexo e possui %d componentes.\n", componentesConexos);
     
     DestroiGrafo(listaAdj, tamAtual);
-    DestroiGrafo(listaAdjTranposta, tamAtualTransp);
+    DestroiGrafo(listaAdjTransposta, tamAtualTransp);
 
     fclose(bin);
 }
@@ -193,6 +191,7 @@ void Funcionalidade12(char *nomeDadosBIN, int n){
 
     // inicio da leitura dos registros de cabecalho
     cabecalhoDados regCab;
+    fseek(bin, 0, SEEK_SET);
     LeCabecalhoDados(bin, &regCab);
 
     // verifica se o arquivo está consistente
