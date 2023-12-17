@@ -8,8 +8,7 @@ Nome: Giovanna de Freitas Velasco - NUSP: 13676346
 #include "pilha_encadeada.h"
 
 pilha *CriaPilha(){
-    pilha *p;
-    p = (pilha *) malloc(sizeof(pilha));
+    pilha *p = (pilha *) malloc(sizeof(pilha));
     p->tamPilha = 0;
     p->topo = NULL;
 }
@@ -47,5 +46,13 @@ int DesempilhaElemento(pilha *p){
 }
 
 void DestroiPilha(pilha *p){
-    for(int i = 0; i < p->tamPilha; i++) DesempilhaElemento(p);
+    no *aux;
+    for(int i = 0; i < p->tamPilha; i++){
+        aux = p->topo;
+        p->topo = p->topo->prox;
+
+        free(aux);
+    }
+
+    free(p);
 }

@@ -93,23 +93,25 @@ void Funcionalidade10(char *nomeDadosBIN, int n){
         free(noAtual);
         free(nomeTecnologiaDestino);
     }
-    //printf("\b\b");
+
     DestroiGrafo(listaAdjTransposta, tamAtual);
     fclose(bin);
 }
 
-void BuscaEmProfundidade(noVertice *listaAdj, int verticeAtual, int *verticesVisitados, int numVertices, pilha *pilhaDeBusca){
+void BuscaEmProfundidade(noVertice *listaAdj, int verticeAtual, int *verticesVisitados, int numVertices, pilha *pilhaDaBusca){
     int posInsercao;
+
+    verticesVisitados[verticeAtual] = 1;
 
     noAresta *arestaAtual = listaAdj[verticeAtual].listaLinear->ini;
     while(arestaAtual != NULL){
         int verticeSucessor = BuscaBinaria(listaAdj, 0, numVertices, arestaAtual->nomeTecnologia, &posInsercao);
         if(verticesVisitados[verticeSucessor] == 0)
-            BuscaEmProfundidade(listaAdj, verticeSucessor, verticesVisitados, numVertices, pilhaDeBusca);
+            BuscaEmProfundidade(listaAdj, verticeSucessor, verticesVisitados, numVertices, pilhaDaBusca);
         arestaAtual = arestaAtual->prox;
     }
 
-    EmpilhaElemento(pilhaDeBusca, verticeAtual);
+    EmpilhaElemento(pilhaDaBusca, verticeAtual);
 }
 
 int ContabilizaCompFortConexos(noVertice *listaAdj, noVertice *listaAdjTransposta, int numVertices){
@@ -118,17 +120,22 @@ int ContabilizaCompFortConexos(noVertice *listaAdj, noVertice *listaAdjTranspost
     pilha *pilhaDaBusca = CriaPilha();
     pilha *pilhaCompConexos = CriaPilha();
 
+    int componentesConexos = 0;
+
+    
     // coloca todos os vértices como não visitados
     for(int i = 0; i < numVertices; i++) verticesVisitados[i] = 0;
 
-    for(int i = 0; i < numVertices; i++)
+    for(int i = 0; i < numVertices; i++){
         if(verticesVisitados[i] == 0) // caso o vértice não tenha sido visitado, realiza-se busca em profundidade
             BuscaEmProfundidade(listaAdj, i, verticesVisitados, numVertices, pilhaDaBusca);
-
+    }
+    
+    
     // coloca todos os vértices como não visitados
     for(int i = 0; i < numVertices; i++) verticesVisitados[i] = 0;
 
-    int componentesConexos = 0;
+    
     while(EstaVazia(pilhaDaBusca) == 0){
         verticeAtual = DesempilhaElemento(pilhaDaBusca);
         if(verticesVisitados[verticeAtual] == 0){
@@ -165,8 +172,12 @@ void Funcionalidade11(char *nomeDadosBIN){
 
     // como o grafo transposto tem o mesmo número de vértices que o grafo, então tamAtual é igual a tamAtualTransp
     int componentesConexos = ContabilizaCompFortConexos(listaAdj, listaAdjTranposta, tamAtual);
-    printf("componentesConexos: %d\n", componentesConexos);
 
+    if(componentesConexos == 1)
+        printf("Sim, o grafo e fortemente conexo e possui %d componente.\n", componentesConexos);
+    else
+        printf("Nao, o grafo nao e fortemente conexo e possui %d componentes.\n", componentesConexos);
+    
     DestroiGrafo(listaAdj, tamAtual);
     DestroiGrafo(listaAdjTranposta, tamAtualTransp);
 
