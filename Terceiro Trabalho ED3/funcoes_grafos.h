@@ -28,4 +28,6 @@ void ImprimeGrafo(noVertice *listaAdj, int tamAtual);
 
 void DestroiGrafo(noVertice *listaAdj, int tamAtual);
 
+int ContabilizaCompFortConexos(noVertice *listaAdj, noVertice *listaAdjTransposta, int numVertices);
+
 int Dijkstra(noVertice *listaAdj, int tamAtual, char *nomeTecnologiaOrigem, char *nomeTecnologiaDestino, cabecalhoDados regCab);

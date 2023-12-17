@@ -16,10 +16,10 @@ int EstaNoConjunto(conjunto *c, int elemento){
     // percorre o conjunto, verificando se o elemento está no conjunto
     for(int i = 0; i < c->size; i++){
         if(c->elementos[i] == elemento)
-            return 1;
+            return 1; // se estiver no conjunto, retorna 1
     }
 
-    return 0;
+    return 0; //se não estiver no conjunto, retorna 0
 }
 
 void AdicionaElemento(conjunto *c, int elemento){
@@ -41,8 +41,8 @@ conjunto DiferencaConjuntos(conjunto *c1, conjunto *c2){
         if(!EstaNoConjunto(c2, c1->elementos[i]))
             AdicionaElemento(&diferenca, c1->elementos[i]);
     }
-
-    return diferenca;
+ 
+    return diferenca; // retorna o conjunto c1 - c2
 }
 
 void DestroiConjunto(conjunto *c){
