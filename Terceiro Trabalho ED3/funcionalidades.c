@@ -13,17 +13,11 @@ void Funcionalidade8(char *nomeDadosBIN){
     FILE *bin;
     bin = AbrirArquivo(bin, nomeDadosBIN, "rb");
     if(bin == NULL) return;
-
+    
     // inicio da leitura dos registros de cabecalho
     cabecalhoDados regCab;
+    fseek(bin, 0, SEEK_SET);
     LeCabecalhoDados(bin, &regCab);
-
-    // verifica se o arquivo está consistente
-    if(regCab.status == '0'){
-        printf("Falha no processamento do arquivo.");
-        fclose(bin);
-        return;
-    }
 
     int tamAtual = 0; 
     noVertice *listaAdj = (noVertice *) malloc(regCab.nroTecnologias * (sizeof(noVertice)));
@@ -118,14 +112,8 @@ void Funcionalidade11(char *nomeDadosBIN){
 
     // inicio da leitura dos registros de cabecalho
     cabecalhoDados regCab;
+    fseek(bin, 0, SEEK_SET);
     LeCabecalhoDados(bin, &regCab);
-
-    // verifica se o arquivo está consistente
-    if(regCab.status == '0'){
-        printf("Falha no processamento do arquivo.");
-        fclose(bin);
-        return;
-    }
 
     int tamAtual = 0; 
     int tamAtualTransposto = 0;
