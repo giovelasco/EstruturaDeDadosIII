@@ -40,33 +40,6 @@ typedef struct{
 } registroDados;
 
 /**
- * Lê o conteúdo do campo como um valor inteiro.
- * @param campo campo do registro
- * @returns o valor do conteúdo do campo ou -1 se o campo está vazio
-*/
-int LeInteiro(char *campo);
-
-
-/**
- * Realiza a cópia de um campo.
- * @param campo campo do registro a ser copiado
- * @param tamCampo tamanho do campo
- * @returns a cópia do campo do registro
-*/
-char *CopiaCampo(char *campo, int tamCampo);
-
-
-/**
- * Instancia as variáveis do registro.
- * @param regDados registro de dados
- * @param campo campo do registro
- * @param tamCampo tamanho do campo do registro
- * @param delimitador separador dos campos do registro
-*/
-void AlteraRegistro(registroDados *regDados, char *campo, int tamCampo, int delimitador);
-
-
-/**
  * Lê o registro de cabeçalho de um arquivo binário.
  * @param bin ponteiro para o arquivo binário
  * @param cabDados ponteiro para struct do tipo registro de cabeçalho
@@ -80,59 +53,3 @@ void LeCabecalhoDados(FILE *bin, cabecalhoDados *cabDados);
  * @param regDados ponteiro para struct do tipo registro de dados
 */
 void LeRegistroDados(FILE *bin, registroDados *regDados);
-
-
-/**
- * Realiza a impressão dos campos de um registro de dados.
- * @param regDados struct do tipo registro de dados
-*/
-void ImprimeRegistro(registroDados regDados);
-
-
-/**
- * Escreve o registro de cabeçalho em um arquivo binário.
- * @param bin ponteiro do arquivo binário
- * @param cabDados struct do tipo registro de cabeçalho
-*/
-void EscreveCabecalhoDados(FILE *bin, cabecalhoDados cabDados);
-
-
-/**
- * Escreve o registro de dados em um arquivo binário.
- * @param bin ponteiro do arquivo binário
- * @param regDados struct do tipo registro de dados
-*/
-void EscreveRegistroDados(FILE *bin, registroDados regDados);
-
-
-/**
- * Calcula a posição do byteoffset do RRN.
- * @param RRN número relativo de registro
-*/
-int CalculaByteOffset(int RRN);
-
-
-/**
- * Realiza a comparação do valor de um campo com valor inteiro
- * e um valor a ser buscado.
- * @param bin ponteiro para arquivo binário
- * @param regDados ponteiro para struct registro de dados
- * @param distRemovido distância em bytes entre o campo analisado e o campo "removido"
- * @param campoComparar valor do campo a ser buscado
- * @returns 1 caso o campo seja igual ao valor buscado e 0 caso contrário
-*/
-int ComparaCampoInteiro(FILE *bin, registroDados *regDados, int distRemovido, int campoComparar);
-
-
-/**
- * Realiza a comparação do valor de um campo com string
- * e uma string a ser buscada.
- * @param bin ponteiro para arquivo binário
- * @param regDados ponteiro para struct registro de dados
- * @param tipoCampo recebe 1 caso o campo seja "nomeTecnologiaOrigem" e 2 caso o campo seja "nomeTecnologiaDestino"
- * @param campoComparar string a ser buscada
- * @returns 1 caso o campo seja igual à string buscada e 0 caso contrário
-*/
-int ComparaCampoString(FILE *bin, registroDados *regDados, int tipoCampo, char *campoComparar);
-
-
