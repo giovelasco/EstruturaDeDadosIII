@@ -42,13 +42,12 @@ int AdicionaAresta(listaArestas *lista, int peso, char *nomeTecnologia){
     novoNo->nomeTecnologia = (char *) malloc(sizeof(char) * (strlen(nomeTecnologia) + 1));
     strcpy(novoNo->nomeTecnologia, nomeTecnologia);
     novoNo->peso = peso;
+    lista->tam++;
 
     // a lista está vazia ou o elemento será o primeiro: inserção no início
     if(lista->ini == NULL || strcmp(novoNo->nomeTecnologia, lista->ini->nomeTecnologia) < 0){ 
         novoNo->prox = lista->ini; // caso a lista esteja vazia, lista->ini = NULL
-
         lista->ini = novoNo;
-        lista->tam++;
 
         return 1; 
     }

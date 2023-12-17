@@ -18,12 +18,6 @@ Nome: Giovanna de Freitas Velasco - NUSP: 13676346
 FILE *AbrirArquivo(FILE *arquivo, char *nomeArquivo, char *modoAbertura);
 
 /**
- * Verifica a integridade de um arquivo.
- * @param bin ponteiro para um arquivo
-*/
-int VerificaStatus(FILE *bin);
-
-/**
  * Lê uma palavra digitada no terminal.
  * @returns retorna a palavra lida
 */
@@ -34,9 +28,3 @@ char *readline();
  * @returns retorna a palavra lida ou uma string vazia
 */
 char *readlineAspas();
-
-/**
- * Imprime o valor correnpondente à soma dos bytes de um arquivo binário divida por 100.
- * @param nomeArquivoBinario nome do arquivo binário
-*/
-void binarioNaTela(char *nomeArquivoBinario);

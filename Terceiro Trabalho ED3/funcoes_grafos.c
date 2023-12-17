@@ -7,7 +7,6 @@ Nome: Giovanna de Freitas Velasco - NUSP: 13676346
 #include <stdlib.h>
 #include <string.h>
 #include "funcoes_grafos.h"
-#include "conjunto.h"
 
 #define INT_MAX 100000
 
@@ -241,4 +240,5 @@ int Dijkstra(noVertice *listaAdj, int tamAtual, char *nomeTecnologiaOrigem, char
 
     int posDesejada = BuscaBinaria(listaAdj, 0, regCab.nroTecnologias, nomeTecnologiaDestino, &posInsercao);
     return (vetorDistancias[posDesejada] == INT_MAX) ? -1 : vetorDistancias[posDesejada];
+
 }

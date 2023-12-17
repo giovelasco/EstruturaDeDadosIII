@@ -4,7 +4,7 @@ Nome: Giovanna de Freitas Velasco - NUSP: 13676346
 */
 
 #include <stdio.h>
-#include "funcionalidades_grafos.h"
+#include "funcionalidades.h"
 
 int main(){
     int escolha;
