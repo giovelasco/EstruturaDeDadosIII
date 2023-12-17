@@ -241,9 +241,9 @@ int Dijkstra(noVertice *listaAdj, int tamAtual, char *nomeTecnologiaOrigem, char
     int posInsercao;
     int posOrigem = BuscaBinaria(listaAdj, 0, regCab.nroTecnologias, nomeTecnologiaOrigem, &posInsercao);
 
-    AdicionaElemento(&verticesPercorridos, posOrigem);
+    AdicionaElementoConjunto(&verticesPercorridos, posOrigem);
     for(int i = 0; i < regCab.nroTecnologias; i++){
-        AdicionaElemento(&todosVertices, i);
+        AdicionaElementoConjunto(&todosVertices, i);
         vetorDistancias[i] = INT_MAX; 
     } 
     vetorDistancias[posOrigem] = 0; // a distância da origem em relação a si mesma é igual a zero
@@ -275,7 +275,7 @@ int Dijkstra(noVertice *listaAdj, int tamAtual, char *nomeTecnologiaOrigem, char
             }
         }
 
-        AdicionaElemento(&verticesPercorridos, verticesAPercorrer.elementos[posMinima]); // adiciona o vértice a ser analisado na iteração
+        AdicionaElementoConjunto(&verticesPercorridos, verticesAPercorrer.elementos[posMinima]); // adiciona o vértice a ser analisado na iteração
 
         noAtual = listaAdj[verticesAPercorrer.elementos[posMinima]].listaLinear->ini;
         for(int i = 0; i < listaAdj[verticesAPercorrer.elementos[posMinima]].grauSaida; i++){

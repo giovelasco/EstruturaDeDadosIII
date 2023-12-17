@@ -22,7 +22,7 @@ void CriaConjunto(conjunto *c);
  * @param c ponteiro para o conjunto
  * @param elemento elemento a adicionar
 */
-void AdicionaElemento(conjunto *c, int elemento);
+void AdicionaElementoConjunto(conjunto *c, int elemento);
 
 /**
  * @brief Verifica a diferença entre os elementos entre dois conjuntos.
