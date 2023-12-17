@@ -13,29 +13,27 @@ typedef struct{
 
 /**
  * Instancia um novo conjunto.
+ * @param c ponteiro para o conjunto
 */
 void CriaConjunto(conjunto *c);
 
 /**
  * @brief Adiciona um novo elemento à um conjunto.
- * 
- * @param c conjunto
+ * @param c ponteiro para o conjunto
  * @param elemento elemento a adicionar
 */
 void AdicionaElemento(conjunto *c, int elemento);
 
 /**
  * @brief Verifica a diferença entre os elementos entre dois conjuntos.
- * 
- * @param c1 primeiro conjunto
- * @param c2 segundo conjunto
+ * @param c1 ponteiro para o primeiro conjunto
+ * @param c2 ponteiro para o segundo conjunto
  * @return conjunto da diferença
 */
 conjunto DiferencaConjuntos(conjunto *c1, conjunto *c2);
 
 /**
  * @brief Desaloca memória de um conjunto.
- * 
- * @param c conjunto
+ * @param c ponteiro para o conjunto
 */
 void DestroiConjunto(conjunto *c);
