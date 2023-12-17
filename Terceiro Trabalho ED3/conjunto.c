@@ -32,6 +32,7 @@ void AdicionaElemento(conjunto *c, int elemento){
 
         // adiciona o novo nó
         c->elementos[c->size] = elemento;
+        
         c->size++;
     }
 }
