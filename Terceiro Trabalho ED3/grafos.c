@@ -235,7 +235,7 @@ int ContaComponentesFortementeConexos(grafo *grafoOriginal, grafo *grafoTranspos
     return componentesConexos;
 }
 
-int Dijkstra(grafo *grafo, char *nomeTecnologiaOrigem, char *nomeTecnologiaDestino){
+int MenorCaminho(grafo *grafo, char *nomeTecnologiaOrigem, char *nomeTecnologiaDestino){
     int vetorDistancias[grafo->numVertices]; // D
 
     conjunto verticesPercorridos; // S

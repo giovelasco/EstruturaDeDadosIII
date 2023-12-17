@@ -180,7 +180,7 @@ void Funcionalidade12(char *nomeDadosBIN, int n){
         nomeTecnologiaOrigem = readlineAspas();
         nomeTecnologiaDestino = readlineAspas();
 
-        pesoCaminho = Dijkstra(grafo, nomeTecnologiaOrigem, nomeTecnologiaDestino);
+        pesoCaminho = MenorCaminho(grafo, nomeTecnologiaOrigem, nomeTecnologiaDestino);
 
         if(pesoCaminho == -1)
             printf("%s %s: CAMINHO INEXISTENTE.\n", nomeTecnologiaOrigem, nomeTecnologiaDestino);
