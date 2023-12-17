@@ -106,8 +106,9 @@ void BuscaEmProfundidade(noVertice *listaAdj, int verticeAtual, int *verticesVis
     noAresta *arestaAtual = listaAdj[verticeAtual].listaLinear->ini;
     while(arestaAtual != NULL){
         int verticeSucessor = BuscaBinaria(listaAdj, 0, numVertices, arestaAtual->nomeTecnologia, &posInsercao);
-        if(verticesVisitados[verticeSucessor] == 0)
+        if(verticesVisitados[verticeSucessor] == 0){
             BuscaEmProfundidade(listaAdj, verticeSucessor, verticesVisitados, numVertices, pilhaDaBusca);
+        }
         arestaAtual = arestaAtual->prox;
     }
 
@@ -176,7 +177,7 @@ void Funcionalidade11(char *nomeDadosBIN){
     if(componentesConexos == 1)
         printf("Sim, o grafo e fortemente conexo e possui %d componente.\n", componentesConexos);
     else
-        printf("Nao, o grafo nao e fortemente conexo e possui %d componentes.\n", componentesConexos);
+        printf("Não, o grafo nao e fortemente conexo e possui %d componentes.\n", componentesConexos);
     
     DestroiGrafo(listaAdj, tamAtual);
     DestroiGrafo(listaAdjTranposta, tamAtualTransp);
