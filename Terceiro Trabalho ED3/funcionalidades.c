@@ -98,7 +98,7 @@ void Funcionalidade10(char *nomeDadosBIN, int n){
 void BuscaEmProfundidade(noVertice *listaAdj, int verticeAtual, int *verticesVisitados, int numVertices, pilha *pilhaDeBusca){
     int posInsercao;
 
-    noAresta *arestaAtual = listaAdj[verticeAtual].listaLinear;
+    noAresta *arestaAtual = listaAdj[verticeAtual].listaLinear->ini;
     while(arestaAtual != NULL){
         int verticeSucessor = BuscaBinaria(listaAdj, 0, numVertices, arestaAtual->nomeTecnologia, &posInsercao);
         if(verticesVisitados[verticeSucessor] == 0)
