@@ -34,7 +34,7 @@ int AdicionaElemento(listaArestas *lista, int peso, char *nomeTecnologia){
         novoNo->prox = lista->ini; // caso a lista esteja vazia, lista->ini = NULL
         lista->ini = novoNo;
 
-        return 1; 
+        return 1; // retorna que a aresta foi inserida
     }
     
     // busca pela posição desejada, tendo referência final ao elemento anterior à posição em que será inserido

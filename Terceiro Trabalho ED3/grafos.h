@@ -16,18 +16,31 @@ typedef struct{
     listaArestas *listaLinear;
 } noVertice;
 
+typedef struct{
+    int numVertices;
+    noVertice *listaAdj;
+} grafo;
+
+grafo *CriaGrafo(int tamLista);
+
 int BuscaBinaria(noVertice *listaAdj, int inicio, int fim, char *nomeBuscado, int *posInsercao);
 
+int BuscaBinaria2(grafo *grafo, char *nomeBuscado, int *posInsercao);
+
 void GeraGrafo(FILE *bin, noVertice *listaAdj, int *tamAtual, int tipoGrafo);
+
+void GeraGrafo2(FILE *bin, grafo *grafo);
+
+grafo *GrafoTransposto(const grafo *grafoOriginal);
 
 void InsereNoGrafo(noVertice *listaAdj, int *tamAtual, char *tecnologiaOrigem, int peso, int grupo, char *tecnologiaDestino);
 
 void InsereNoGrafoTransposto(noVertice *listaAdj, int *tamAtual, char *tecnologiaOrigem, int peso, int grupo, char *tecnologiaDestino);
 
-void ImprimeGrafo(noVertice *listaAdj, int tamAtual);
+void ImprimeGrafo(grafo *g);
 
-void DestroiGrafo(noVertice *listaAdj, int tamAtual);
+void DestroiGrafo(grafo *g);
 
-int ContabilizaCompFortConexos(noVertice *listaAdj, noVertice *listaAdjTransposta, int numVertices);
+int ContaComponentesFortementeConexos(grafo *grafoOriginal, grafo *grafoTransposto);
 
-int Dijkstra(noVertice *listaAdj, int tamAtual, char *nomeTecnologiaOrigem, char *nomeTecnologiaDestino, cabecalhoDados regCab);
+int Dijkstra(grafo *grafo, char *nomeTecnologiaOrigem, char *nomeTecnologiaDestino);

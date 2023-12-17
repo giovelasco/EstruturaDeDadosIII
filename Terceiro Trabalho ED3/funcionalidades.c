@@ -9,25 +9,24 @@ Nome: Giovanna de Freitas Velasco - NUSP: 13676346
 #include "funcionalidades.h"
 
 void Funcionalidade8(char *nomeDadosBIN){
-    // abre os arquivos
+    // abre os arquivos e verifica sua consistência
     FILE *bin;
     bin = AbrirArquivo(bin, nomeDadosBIN, "rb");
     if(bin == NULL) return;
     
-    // inicio da leitura dos registros de cabecalho
+    // leitura do número de tecnologias escrita no cabeçalho
     int nroTecnologias;
-    fseek(bin, 5, SEEK_SET);
+    fseek(bin, 5, SEEK_SET); // pula para o valor do número de tecnologias
     fread(&nroTecnologias, 1, sizeof(int), bin);
-    fseek(bin, 4, SEEK_CUR);
+    fseek(bin, (TAM_CABECALHO - 9), SEEK_CUR); // pula o restante do cabeçalho
 
     // instancia memória para a lista de adjacências que forma o grafo
-    int tamAtual = 0; 
-    noVertice *listaAdj = (noVertice *) malloc(nroTecnologias * (sizeof(noVertice)));
+    grafo *grafo = CriaGrafo(nroTecnologias);
 
     // gera o grafo pela leitura do arquivo de dados
-    GeraGrafo(bin, listaAdj, &tamAtual, 0);
-    ImprimeGrafo(listaAdj, tamAtual);
-    DestroiGrafo(listaAdj, tamAtual);
+    GeraGrafo2(bin, grafo);
+    ImprimeGrafo(grafo);
+    DestroiGrafo(grafo);
 
     fclose(bin);
 }
@@ -42,16 +41,19 @@ void Funcionalidade9(char *nomeDadosBIN){
     int nroTecnologias;
     fseek(bin, 5, SEEK_SET);
     fread(&nroTecnologias, 1, sizeof(int), bin);
-    fseek(bin, 4, SEEK_CUR);
+    fseek(bin, (TAM_CABECALHO - 9), SEEK_CUR); // pula o restante do cabeçalho
 
-    // instancia memória para a lista de adjacências que forma o grafo transposto
-    int tamAtual = 0; 
-    noVertice *listaAdjTransposta = (noVertice *) malloc(nroTecnologias * (sizeof(noVertice)));
+    // instancia memória para a lista de adjacências que forma o grafo e gera-o
+    grafo *grafoOriginal = CriaGrafo(nroTecnologias);
+    GeraGrafo2(bin, grafoOriginal);
 
-    // gera o grafo pela leitura do arquivo de dados
-    GeraGrafo(bin, listaAdjTransposta, &tamAtual, 1);
-    ImprimeGrafo(listaAdjTransposta, tamAtual);
-    DestroiGrafo(listaAdjTransposta, tamAtual);
+    // gera o grafo transposto a partir do original
+    grafo *grafoTranposto = GrafoTransposto(grafoOriginal);
+
+    ImprimeGrafo(grafoTranposto);
+
+    DestroiGrafo(grafoOriginal);
+    DestroiGrafo(grafoTranposto);
     
     fclose(bin);
 }
@@ -61,30 +63,30 @@ void Funcionalidade10(char *nomeDadosBIN, int n){
     FILE *bin;
     bin = AbrirArquivo(bin, nomeDadosBIN, "rb");
     if(bin == NULL) return;
-    
+
     // inicio da leitura dos registros de cabecalho
     int nroTecnologias;
     fseek(bin, 5, SEEK_SET);
     fread(&nroTecnologias, 1, sizeof(int), bin);
-    fseek(bin, 4, SEEK_CUR);
+    fseek(bin, (TAM_CABECALHO - 9), SEEK_CUR); // pula o restante do cabeçalho
 
-    // instancia memória para a lista de adjacências que forma o grafo transposto
-    int tamAtual = 0; 
-    noVertice *listaAdjTransposta = (noVertice *) malloc(nroTecnologias * (sizeof(noVertice)));
-    
-    // gera o grafo pela leitura do arquivo de dados
-    GeraGrafo(bin, listaAdjTransposta, &tamAtual, 1);
+    // instancia memória para a lista de adjacências que forma o grafo e gera-o
+    grafo *grafoOriginal = CriaGrafo(nroTecnologias);
+    GeraGrafo2(bin, grafoOriginal);
+
+    // gera o grafo transposto a partir do original
+    grafo *grafoTranposto = GrafoTransposto(grafoOriginal);
 
     int posInsercao, posTecnologiaDestino;
     char *nomeTecnologiaDestino;
     for(int i = 0; i < n; i++){
         nomeTecnologiaDestino = readlineAspas();
-        posTecnologiaDestino = BuscaBinaria(listaAdjTransposta, 0, tamAtual, nomeTecnologiaDestino, &posInsercao);
+        posTecnologiaDestino = BuscaBinaria2(grafoTranposto, nomeTecnologiaDestino, &posInsercao);
         
         printf("%s: ", nomeTecnologiaDestino);
         
-        noAresta *noAtual = listaAdjTransposta[posTecnologiaDestino].listaLinear->ini;
-        for(int j = 0; j < listaAdjTransposta[posTecnologiaDestino].grauSaida - 1; j++){
+        noAresta *noAtual = grafoTranposto->listaAdj[posTecnologiaDestino].listaLinear->ini;
+        for(int j = 0; j < grafoTranposto->listaAdj[posTecnologiaDestino].grauSaida - 1; j++){
             printf("%s, ", noAtual->nomeTecnologia);
             noAtual = noAtual->prox;
         }
@@ -95,7 +97,9 @@ void Funcionalidade10(char *nomeDadosBIN, int n){
         free(nomeTecnologiaDestino);
     }
 
-    DestroiGrafo(listaAdjTransposta, tamAtual);
+    DestroiGrafo(grafoOriginal);
+    DestroiGrafo(grafoTranposto);
+
     fclose(bin);
 }
 
@@ -109,35 +113,27 @@ void Funcionalidade11(char *nomeDadosBIN){
     int nroTecnologias;
     fseek(bin, 5, SEEK_SET);
     fread(&nroTecnologias, 1, sizeof(int), bin);
-    fseek(bin, 4, SEEK_CUR);
+    fseek(bin, (TAM_CABECALHO - 9), SEEK_CUR); // pula o restante do cabeçalho
 
-    // instancia memória para as lista de adjacências do grafo e do grafo transposto
-    int tamAtual = 0; 
-    int tamAtualTransp = 0;
-    noVertice *listaAdj = (noVertice *) malloc(nroTecnologias * (sizeof(noVertice)));
-    noVertice *listaAdjTransposta = (noVertice *) malloc(nroTecnologias * (sizeof(noVertice)));
+    // instancia memória para a lista de adjacências que forma o grafo e gera-o
+    grafo *grafoOriginal = CriaGrafo(nroTecnologias);
+    GeraGrafo2(bin, grafoOriginal);
 
-    // gera o grafo pela leitura do arquivo de dados
-    GeraGrafo(bin, listaAdj, &tamAtual, 0);
-
-    // retorna para o início dos registros do arquivo
-    fseek(bin, 13, SEEK_SET);
-
-    // gera o grafo transposto pela leitura do arquivo de dados
-    GeraGrafo(bin, listaAdjTransposta, &tamAtualTransp, 1);
+    // gera o grafo transposto a partir do original
+    grafo *grafoTranposto = GrafoTransposto(grafoOriginal);
 
     // como o grafo transposto tem o mesmo número de vértices que o grafo, então tamAtual é igual a tamAtualTransp
-    int componentesConexos = ContabilizaCompFortConexos(listaAdj, listaAdjTransposta, tamAtual);
+    int componentesConexos = ContaComponentesFortementeConexos(grafoOriginal, grafoTranposto);
 
     // imprime o número de componentes fortemente conexos
     if(componentesConexos == 1)
         printf("Sim, o grafo é fortemente conexo e possui %d componente.\n", componentesConexos);
     else
         printf("Não, o grafo não é fortemente conexo e possui %d componentes.\n", componentesConexos);
-    
+
     // desaloca as listas utilizadas
-    DestroiGrafo(listaAdj, tamAtual);
-    DestroiGrafo(listaAdjTransposta, tamAtualTransp);
+    DestroiGrafo(grafoOriginal);
+    DestroiGrafo(grafoTranposto);
 
     fclose(bin);
 }
@@ -148,31 +144,25 @@ void Funcionalidade12(char *nomeDadosBIN, int n){
     bin = AbrirArquivo(bin, nomeDadosBIN, "rb");
     if(bin == NULL) return;
 
-    // inicio da leitura dos registros de cabecalho
-    cabecalhoDados regCab;
-    fseek(bin, 0, SEEK_SET);
-    LeCabecalhoDados(bin, &regCab);
+    // leitura do número de tecnologias escrita no cabeçalho
+    int nroTecnologias;
+    fseek(bin, 5, SEEK_SET); // pula para o valor do número de tecnologias
+    fread(&nroTecnologias, 1, sizeof(int), bin);
+    fseek(bin, (TAM_CABECALHO - 9), SEEK_CUR); // pula o restante do cabeçalho
 
-    // verifica se o arquivo está consistente
-    if(regCab.status == '0'){
-        printf("Falha no processamento do arquivo.");
-        fclose(bin);
-        return;
-    }
+    // instancia memória para a lista de adjacências que forma o grafo
+    grafo *grafo = CriaGrafo(nroTecnologias);
 
-    int tamAtual = 0; 
-    noVertice *listaAdj = (noVertice *) malloc(regCab.nroTecnologias * (sizeof(noVertice)));
-    
-    GeraGrafo(bin, listaAdj, &tamAtual, 0);
+    // gera o grafo pela leitura do arquivo de dados
+    GeraGrafo2(bin, grafo);
 
     int pesoCaminho = -1;
     char *nomeTecnologiaOrigem, *nomeTecnologiaDestino;
-
     for(int i = 0; i < n; i++){
         nomeTecnologiaOrigem = readlineAspas();
         nomeTecnologiaDestino = readlineAspas();
 
-        pesoCaminho = Dijkstra(listaAdj, tamAtual, nomeTecnologiaOrigem, nomeTecnologiaDestino, regCab);
+        pesoCaminho = Dijkstra(grafo, nomeTecnologiaOrigem, nomeTecnologiaDestino);
 
         if(pesoCaminho == -1)
             printf("%s %s: CAMINHO INEXISTENTE.\n", nomeTecnologiaOrigem, nomeTecnologiaDestino);
@@ -183,6 +173,7 @@ void Funcionalidade12(char *nomeDadosBIN, int n){
         free(nomeTecnologiaDestino);
     }
 
-    DestroiGrafo(listaAdj, tamAtual);
+    DestroiGrafo(grafo);
+
     fclose(bin);
 }
