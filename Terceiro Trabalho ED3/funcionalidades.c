@@ -20,11 +20,11 @@ void Funcionalidade8(char *nomeDadosBIN){
     fread(&nroTecnologias, 1, sizeof(int), bin);
     fseek(bin, 4, SEEK_CUR);
 
-    // lista de adjacências que forma o grafo
+    // instancia memória para a lista de adjacências que forma o grafo
     int tamAtual = 0; 
     noVertice *listaAdj = (noVertice *) malloc(nroTecnologias * (sizeof(noVertice)));
 
-    // construção do grafo
+    // gera o grafo pela leitura do arquivo de dados
     GeraGrafo(bin, listaAdj, &tamAtual, 0);
     ImprimeGrafo(listaAdj, tamAtual);
     DestroiGrafo(listaAdj, tamAtual);
@@ -44,11 +44,11 @@ void Funcionalidade9(char *nomeDadosBIN){
     fread(&nroTecnologias, 1, sizeof(int), bin);
     fseek(bin, 4, SEEK_CUR);
 
-    // lista de adjacências que forma o grafo transposto
+    // instancia memória para a lista de adjacências que forma o grafo transposto
     int tamAtual = 0; 
     noVertice *listaAdjTransposta = (noVertice *) malloc(nroTecnologias * (sizeof(noVertice)));
 
-    // construção do grafo transposto
+    // gera o grafo pela leitura do arquivo de dados
     GeraGrafo(bin, listaAdjTransposta, &tamAtual, 1);
     ImprimeGrafo(listaAdjTransposta, tamAtual);
     DestroiGrafo(listaAdjTransposta, tamAtual);
@@ -68,10 +68,11 @@ void Funcionalidade10(char *nomeDadosBIN, int n){
     fread(&nroTecnologias, 1, sizeof(int), bin);
     fseek(bin, 4, SEEK_CUR);
 
-    // lista de adjacências que forma o grafo transposto
+    // instancia memória para a lista de adjacências que forma o grafo transposto
     int tamAtual = 0; 
     noVertice *listaAdjTransposta = (noVertice *) malloc(nroTecnologias * (sizeof(noVertice)));
     
+    // gera o grafo pela leitura do arquivo de dados
     GeraGrafo(bin, listaAdjTransposta, &tamAtual, 1);
 
     int posInsercao, posTecnologiaDestino;
@@ -98,36 +99,43 @@ void Funcionalidade10(char *nomeDadosBIN, int n){
     fclose(bin);
 }
 
-
 void Funcionalidade11(char *nomeDadosBIN){
     // abre os arquivos
     FILE *bin;
     bin = AbrirArquivo(bin, nomeDadosBIN, "rb");
     if(bin == NULL) return;
-
+    
     // inicio da leitura dos registros de cabecalho
-    cabecalhoDados regCab;
-    fseek(bin, 0, SEEK_SET);
-    LeCabecalhoDados(bin, &regCab);
+    int nroTecnologias;
+    fseek(bin, 5, SEEK_SET);
+    fread(&nroTecnologias, 1, sizeof(int), bin);
+    fseek(bin, 4, SEEK_CUR);
 
+    // instancia memória para as lista de adjacências do grafo e do grafo transposto
     int tamAtual = 0; 
     int tamAtualTransp = 0;
+    noVertice *listaAdj = (noVertice *) malloc(nroTecnologias * (sizeof(noVertice)));
+    noVertice *listaAdjTransposta = (noVertice *) malloc(nroTecnologias * (sizeof(noVertice)));
 
-    noVertice *listaAdj = (noVertice *) malloc(regCab.nroTecnologias * (sizeof(noVertice)));
-    noVertice *listaAdjTransposta = (noVertice *) malloc(regCab.nroTecnologias * (sizeof(noVertice)));
-
+    // gera o grafo pela leitura do arquivo de dados
     GeraGrafo(bin, listaAdj, &tamAtual, 0);
+
+    // retorna para o início dos registros do arquivo
     fseek(bin, 13, SEEK_SET);
+
+    // gera o grafo transposto pela leitura do arquivo de dados
     GeraGrafo(bin, listaAdjTransposta, &tamAtualTransp, 1);
 
     // como o grafo transposto tem o mesmo número de vértices que o grafo, então tamAtual é igual a tamAtualTransp
     int componentesConexos = ContabilizaCompFortConexos(listaAdj, listaAdjTransposta, tamAtual);
 
+    // imprime o número de componentes fortemente conexos
     if(componentesConexos == 1)
         printf("Sim, o grafo é fortemente conexo e possui %d componente.\n", componentesConexos);
     else
         printf("Não, o grafo não é fortemente conexo e possui %d componentes.\n", componentesConexos);
     
+    // desaloca as listas utilizadas
     DestroiGrafo(listaAdj, tamAtual);
     DestroiGrafo(listaAdjTransposta, tamAtualTransp);
 
