@@ -8,6 +8,7 @@ Nome: Giovanna de Freitas Velasco - NUSP: 13676346
 #include "conjunto.h"
 
 void CriaConjunto(conjunto *c){
+    // instancia os ponteiros dos elementos como nulos
     c->elementos = NULL;
     c->size = 0;
 }
@@ -25,7 +26,11 @@ int EstaNoConjunto(conjunto *c, int elemento){
 void AdicionaElemento(conjunto *c, int elemento){
     // pelas propriedades de conjuntos, não se pode inserir um elemento que já está no conjunto
     if(!EstaNoConjunto(c, elemento)){
+
+        // aloca novo nó para representar o elemento
         c->elementos = (int *) realloc(c->elementos, (c->size + 1) * sizeof(int));
+
+        // adiciona o novo nó
         c->elementos[c->size] = elemento;
         
         c->size++;
@@ -33,6 +38,7 @@ void AdicionaElemento(conjunto *c, int elemento){
 }
 
 conjunto DiferencaConjuntos(conjunto *c1, conjunto *c2){
+    // cria e instancia o conjunto da diferença
     conjunto diferenca;
     CriaConjunto(&diferenca);
 
@@ -46,6 +52,6 @@ conjunto DiferencaConjuntos(conjunto *c1, conjunto *c2){
 }
 
 void DestroiConjunto(conjunto *c){
-    // desaloca o conjunto
+    // desaloca a memoria do conjunto
     free(c->elementos);
 }
