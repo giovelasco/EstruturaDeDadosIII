@@ -7,6 +7,7 @@ Nome: Giovanna de Freitas Velasco - NUSP: 13676346
 #include <stdlib.h>
 #include <string.h>
 #include "funcionalidades.h"
+#include "pilha_encadeada.h"
 
 void Funcionalidade8(char *nomeDadosBIN){
     // abre os arquivos
@@ -110,6 +111,23 @@ void Funcionalidade10(char *nomeDadosBIN, int n){
     fclose(bin);
 }
 
+int ContabilizaCompFortConexos(noVertice *listaAdj, noVertice *listaAdjTransposta, int numVertices){
+    int verticesVisitados[numVertices];
+    pilha *pilhaDaBusca = CriaPilha();
+
+    // coloca todos os vértices como não visitados
+    for(int i = 0; i < numVertices; i++) verticesVisitados[i] = 0;
+
+    for(int i = 0; i < numVertices; i++)
+        if(verticesVisitados[i] == 0) // caso o vértice não tenha sido visitado, realiza-se busca em profundidade
+            BuscaEmProfundidade();
+
+    // coloca todos os vértices como não visitados
+    for(int i = 0; i < numVertices; i++) verticesVisitados[i] = 0;
+
+    int componentesConexas;
+}
+
 void Funcionalidade11(char *nomeDadosBIN){
     // abre os arquivos
     FILE *bin;
@@ -128,16 +146,19 @@ void Funcionalidade11(char *nomeDadosBIN){
     }
 
     int tamAtual = 0; 
-    int tamAtualTransposto = 0;
+    int tamAtualTransp = 0;
 
     noVertice *listaAdj = (noVertice *) malloc(regCab.nroTecnologias * (sizeof(noVertice)));
     noVertice *listaAdjTranposta = (noVertice *) malloc(regCab.nroTecnologias * (sizeof(noVertice)));
 
     GeraGrafo(bin, listaAdj, &tamAtual, 0);
-    GeraGrafo(bin, listaAdjTranposta, &tamAtual, 1);
+    GeraGrafo(bin, listaAdjTranposta, &tamAtualTransp, 1);
+
+    // como o grafo transposto tem o mesmo número de vértices que o grafo, então tamAtual é igual a tamAtualTransp
+    ContabilizaCompFortConexos(listaAdj, listaAdjTranposta, tamAtual);
 
     DestroiGrafo(listaAdj, tamAtual);
-    DestroiGrafo(listaAdjTranposta, tamAtualTransposto);
+    DestroiGrafo(listaAdjTranposta, tamAtualTransp);
 
     fclose(bin);
 }

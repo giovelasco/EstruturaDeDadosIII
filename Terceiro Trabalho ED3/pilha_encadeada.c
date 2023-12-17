@@ -29,7 +29,7 @@ int EstaVazia(pilha *p){
 }
 
 int DesempilhaElemento(pilha *p){
-    if(!EstaVazia(p)){
+    if(EstaVazia(p) == 0){
         no *aux;
         int indiceTecnologia;
 
